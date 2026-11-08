@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BlockMath, InlineMath } from "react-katex";
+import { BlockMath, InlineMath } from "./math";
 import {
   ArrowDown,
   ArrowLeftRight,
@@ -150,7 +150,6 @@ export default function Home() {
   const lhs = 1 / p + 1 / q;
   const eulerPass = lhs > 0.5;
   const selectedStep = proofSteps[proofStep];
-
   const pairCards = useMemo(
     () => SOLID_ORDER.map((key) => ({ data: SOLIDS[key], counts: counts(SOLIDS[key]) })),
     [],
@@ -337,10 +336,10 @@ export default function Home() {
               type="button"
               onClick={() => {
                 if (proofStep < proofSteps.length - 1) {
-                  setProofStep((v) => v + 1);
-                  return;
+                  setProofStep((current) => current + 1);
+                } else {
+                  document.getElementById("lab")?.scrollIntoView({ behavior: "smooth" });
                 }
-                document.getElementById("lab")?.scrollIntoView({ behavior: "smooth" });
               }}
             >
               {proofStep === proofSteps.length - 1 ? "В лабораторию" : "Дальше"} <ChevronRight size={15} />
