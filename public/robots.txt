@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://michael-malis.github.io/platonic-solids-atlas/sitemap.xml

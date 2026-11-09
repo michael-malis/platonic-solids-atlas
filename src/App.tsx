@@ -1,110 +1,62 @@
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath, InlineMath } from "./math";
 import {
-  ArrowDown,
-  ArrowLeftRight,
-  Check,
-  ChevronRight,
-  CircleDot,
-  Eye,
-  EyeOff,
-  Pause,
-  Play,
-  Rotate3D,
-  RotateCcw,
-  Shapes,
-  Sparkles,
-  X,
-  ZoomIn,
+  ArrowDown, ArrowLeftRight, Check, ChevronRight, CircleDot, Eye, EyeOff,
+  Pause, Play, Rotate3D, RotateCcw, Shapes, Sparkles, X, ZoomIn,
 } from "lucide-react";
 import { DualCanvas, SolidCanvas } from "./components/platonic-scene";
-import {
-  counts,
-  PAIR_TO_SOLID,
-  SOLID_ORDER,
-  SOLIDS,
-  valuesForPair,
-  type SolidKey,
-} from "./lib/platonic";
+import { ProofVisual } from "./components/proof-visual";
+import { COPY, localeFromPath, type Locale } from "./content";
+import { counts, PAIR_TO_SOLID, SOLID_ORDER, SOLIDS, valuesForPair, type SolidKey } from "./lib/platonic";
 
 type DisplayMode = "solid" | "glass" | "wire";
 
-// Vinext's production serializer preserves escaped slashes in some client
-// strings. Build TeX commands at runtime so KaTeX always receives one slash.
-const TEX = String.fromCharCode(92);
-
-const bodyTabs: { key: SolidKey; short: string }[] = [
-  { key: "tetra", short: "Тетра" },
-  { key: "cube", short: "Куб" },
-  { key: "octa", short: "Окта" },
-  { key: "dodeca", short: "Додека" },
-  { key: "icosa", short: "Икоса" },
-];
-
-const dualPairs: { source: SolidKey; label: string; target: string }[] = [
-  { source: "cube", label: "Куб", target: "Октаэдр" },
-  { source: "dodeca", label: "Додекаэдр", target: "Икосаэдр" },
-  { source: "tetra", label: "Тетраэдр", target: "Тетраэдр" },
-];
-
-const proofSteps = [
-  {
-    kicker: "Шаг 1 · язык графов",
-    title: "Переведём геометрию в подсчёт",
-    text: "Грани и рёбра выпуклого многогранника образуют связный плоский граф на сфере. У правильного многогранника каждая грань — один и тот же правильный p-угольник, а в каждой вершине сходится одно и то же число q рёбер.",
-    formula: `p,q${TEX}ge 3`,
-    note: "Двухугольная грань не ограничивает область, а две грани при вершине не создают пространственного угла.",
-  },
-  {
-    kicker: "Шаг 2 · двойной подсчёт",
-    title: "Посчитаем инцидентности двумя способами",
-    text: "Каждое ребро принадлежит ровно двум граням. Аналогично, у каждого ребра два конца. Поэтому сумма числа рёбер по всем граням равна 2E, и сумма степеней всех вершин тоже равна 2E.",
-    formula: `pF=2E,${TEX}qquad qV=2E`,
-    note: "Это необходимые равенства для любого кандидата типа {p,q}.",
-  },
-  {
-    kicker: "Шаг 3 · формула Эйлера",
-    title: "Кривизна превращается в неравенство",
-    text: "Подставим V=2E/q и F=2E/p в V−E+F=2. После деления на 2E получаем положительную добавку 1/E — именно она отличает сферу от плоской мозаики.",
-    formula: `${TEX}frac{1}{p}+${TEX}frac{1}{q}=${TEX}frac{1}{2}+${TEX}frac{1}{E}>${TEX}frac{1}{2}`,
-    note: "Если сумма равна 1/2, получается плоская мозаика; если меньше — гиперболическая, но не выпуклый многогранник.",
-  },
-  {
-    kicker: "Шаг 4 · других пар нет",
-    title: "Перебор становится конечным",
-    text: "По двойственности можно сначала считать p≤q. Если p≥4, то 1/p+1/q≤1/2 — противоречие. Значит p=3. Тогда 1/3+1/q>1/2, откуда q<6. При q≥3 остаются q=3,4,5. Возвращая перестановки p↔q, получаем ровно пять пар.",
-    formula: "(3,3),(4,3),(3,4),(5,3),(3,5)",
-    note: "Здесь доказана невозможность всех остальных целочисленных вариантов.",
-  },
-  {
-    kicker: "Шаг 5 · существование",
-    title: "Необходимые условия ещё не гарантируют модель",
-    text: "Теперь отдельно предъявляем пять конструкций: тетраэдр, куб, октаэдр, додекаэдр и икосаэдр. Для каждой модель выше действительно имеет правильные грани, одинаковое окружение каждой вершины и выпукла.",
-    formula: `${TEX}underbrace{${TEX}exists${TEX},5}_{${TEX}text{существование}}${TEX}qquad+${TEX}qquad${TEX}underbrace{${TEX}nexists${TEX},${TEX}text{других типов}}_{${TEX}text{невозможность}}`,
-    note: "Только вместе невозможность остальных пар и явное существование пяти моделей завершают доказательство.",
-  },
-];
+const DUAL_KEY: Record<SolidKey, SolidKey> = {
+  tetra: "tetra", cube: "octa", octa: "cube", dodeca: "icosa", icosa: "dodeca",
+};
 
 function Toggle({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button className={`toggle ${active ? "is-active" : ""}`} type="button" onClick={onClick} aria-pressed={active}>
-      {active ? <Eye size={15} /> : <EyeOff size={15} />}
-      {children}
+      {active ? <Eye size={15} /> : <EyeOff size={15} />}{children}
     </button>
   );
 }
 
 function Metric({ label, value, color }: { label: string; value: number; color: string }) {
-  return (
-    <div className="metric">
-      <span className="metric-dot" style={{ background: color }} />
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
+  return <div className="metric"><span className="metric-dot" style={{ background: color }} /><span>{label}</span><strong>{value}</strong></div>;
+}
+
+function languagePath(locale: Locale) {
+  const base = import.meta.env.BASE_URL;
+  return locale === "ru" ? `${base}ru/` : base;
+}
+
+function applyRuntimeMetadata(locale: Locale) {
+  const copy = COPY[locale];
+  const pageUrl = new URL(languagePath(locale), window.location.origin).href;
+  const setMeta = (selector: string, value: string) => document.querySelector(selector)?.setAttribute("content", value);
+  document.documentElement.lang = locale;
+  document.title = copy.meta.title;
+  setMeta('meta[name="description"]', copy.meta.description);
+  setMeta('meta[property="og:title"]', copy.meta.title);
+  setMeta('meta[property="og:description"]', copy.meta.description);
+  setMeta('meta[property="og:url"]', pageUrl);
+  setMeta('meta[property="og:locale"]', locale === "ru" ? "ru_RU" : "en_US");
+  setMeta('meta[property="og:locale:alternate"]', locale === "ru" ? "en_US" : "ru_RU");
+  setMeta('meta[name="twitter:title"]', copy.meta.title);
+  setMeta('meta[name="twitter:description"]', copy.meta.description);
+  document.querySelector('link[rel="canonical"]')?.setAttribute("href", pageUrl);
+  const schema = document.getElementById("site-schema");
+  if (schema) schema.textContent = JSON.stringify({
+    "@context": "https://schema.org", "@type": "EducationalApplication", name: copy.meta.title,
+    description: copy.meta.description, url: pageUrl, applicationCategory: "EducationalApplication",
+    educationalLevel: "Secondary education, undergraduate", inLanguage: locale, isAccessibleForFree: true,
+  });
 }
 
 export default function Home() {
+  const [locale, setLocale] = useState<Locale>(() => localeFromPath());
   const [solidKey, setSolidKey] = useState<SolidKey>("cube");
   const [mode, setMode] = useState<DisplayMode>("solid");
   const [parts, setParts] = useState({ faces: true, edges: true, vertices: true });
@@ -115,14 +67,20 @@ export default function Home() {
   const [p, setP] = useState(3);
   const [q, setQ] = useState(5);
 
+  const copy = COPY[locale];
   const solid = SOLIDS[solidKey];
   const c = counts(solid);
   const source = SOLIDS[dualSource];
-  const dualKey: Record<SolidKey, SolidKey> = { tetra: "tetra", cube: "octa", octa: "cube", dodeca: "icosa", icosa: "dodeca" };
-  const target = SOLIDS[dualKey[dualSource]];
+  const target = SOLIDS[DUAL_KEY[dualSource]];
   const sourceCounts = counts(source);
   const targetCounts = counts(target);
 
+  useEffect(() => { applyRuntimeMetadata(locale); }, [locale]);
+  useEffect(() => {
+    const syncLocale = () => setLocale(localeFromPath());
+    window.addEventListener("popstate", syncLocale);
+    return () => window.removeEventListener("popstate", syncLocale);
+  }, []);
   useEffect(() => {
     if (!playing) return;
     let frame = 0;
@@ -132,10 +90,7 @@ export default function Home() {
       previous = now;
       setProgress((value) => {
         const next = value + delta / 4.8;
-        if (next >= 1) {
-          setPlaying(false);
-          return 1;
-        }
+        if (next >= 1) { setPlaying(false); return 1; }
         return next;
       });
       frame = requestAnimationFrame(tick);
@@ -144,264 +99,96 @@ export default function Home() {
     return () => cancelAnimationFrame(frame);
   }, [playing]);
 
-  const pairKey = `${p}-${q}`;
-  const match = PAIR_TO_SOLID[pairKey];
+  const switchLocale = (next: Locale) => {
+    if (next === locale) return;
+    window.history.pushState({ locale: next }, "", `${languagePath(next)}${window.location.hash}`);
+    setLocale(next);
+  };
+  const match = PAIR_TO_SOLID[`${p}-${q}`];
   const pairValues = valuesForPair(p, q);
   const lhs = 1 / p + 1 / q;
   const eulerPass = lhs > 0.5;
-  const selectedStep = proofSteps[proofStep];
-  const pairCards = useMemo(
-    () => SOLID_ORDER.map((key) => ({ data: SOLIDS[key], counts: counts(SOLIDS[key]) })),
-    [],
-  );
+  const selectedStep = copy.proof.steps[proofStep];
+  const pairCards = useMemo(() => SOLID_ORDER.map((key) => ({ data: SOLIDS[key], counts: counts(SOLIDS[key]) })), []);
 
   return (
     <>
-      <a className="skip-link" href="#main-content">Перейти к основному содержанию</a>
-      <nav className="topbar" aria-label="Основная навигация">
-        <a className="brand" href="#top"><span className="brand-mark"><Shapes aria-hidden="true" size={19} /></span><span>Платоновы тела</span></a>
-        <div className="nav-links">
-          <a href="#explore">Исследование</a>
-          <a href="#duality">Двойственность</a>
-          <a href="#proof">Доказательство</a>
-          <a href="#lab">Лаборатория</a>
+      <a className="skip-link" href="#main-content">{copy.skip}</a>
+      <nav className="topbar" aria-label={copy.nav.aria}>
+        <a className="brand" href="#top"><span className="brand-mark"><Shapes aria-hidden="true" size={19} /></span><span>{copy.brand}</span></a>
+        <div className="nav-links"><a href="#explore">{copy.nav.explore}</a><a href="#duality">{copy.nav.duality}</a><a href="#proof">{copy.nav.proof}</a><a href="#lab">{copy.nav.lab}</a></div>
+        <div className="nav-actions">
+          <div className="language-switch" role="group" aria-label={copy.language.label}>
+            <button type="button" className={locale === "en" ? "active" : ""} aria-pressed={locale === "en"} aria-label={copy.language.english} onClick={() => switchLocale("en")}>EN</button>
+            <button type="button" className={locale === "ru" ? "active" : ""} aria-pressed={locale === "ru"} aria-label={copy.language.russian} onClick={() => switchLocale("ru")}>RU</button>
+          </div>
+          <a className="nav-cta" href="#explore">{copy.nav.start} <ChevronRight size={15} /></a>
         </div>
-        <a className="nav-cta" href="#explore">Начать <ChevronRight size={15} /></a>
       </nav>
 
       <main id="main-content" tabIndex={-1}>
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <div className="eyebrow"><Sparkles size={14} /> Интерактивный геометрический атлас</div>
-          <h1>Пять форм.<br /><em>Одна закономерность.</em></h1>
-          <p>Вращайте правильные многогранники, постройте их двойственные тела и сами дойдите до причины, по которой шестого платонова тела не существует.</p>
-          <div className="hero-actions">
-            <a className="button primary" href="#explore">Исследовать тела <ArrowDown size={17} /></a>
-            <a className="button ghost" href="#proof">К доказательству</a>
+        <section className="hero" id="top">
+          <div className="hero-copy">
+            <div className="eyebrow"><Sparkles size={14} /> {copy.hero.eyebrow}</div>
+            <h1>{copy.hero.line1}<br /><em>{copy.hero.line2}</em></h1><p>{copy.hero.text}</p>
+            <div className="hero-actions"><a className="button primary" href="#explore">{copy.hero.explore} <ArrowDown size={17} /></a><a className="button ghost" href="#proof">{copy.hero.proof}</a></div>
           </div>
-        </div>
-        <div className="hero-orbit" aria-hidden="true">
-          <div className="orbit orbit-a" /><div className="orbit orbit-b" />
-          <div className="hero-symbol">V − E + F</div><div className="hero-equals">= 2</div>
-          <span className="floating-tag tag-one">{`{ p, q }`}</span>
-          <span className="floating-tag tag-two">двойственность</span>
-          <span className="floating-tag tag-three">Эйлер</span>
-        </div>
-        <div className="scroll-cue"><span>прокрутите</span><ArrowDown size={14} /></div>
-      </section>
-
-      <section className="section explore-section" id="explore">
-        <header className="section-heading">
-          <div><span className="section-index">01</span><div className="eyebrow">Исследуйте</div></div>
-          <h2>Геометрия,<br />которую можно <em>повернуть</em></h2>
-          <p>Каждая модель построена из точных координат. Грани вычисляются как опорные плоскости выпуклой оболочки, рёбра — как стороны этих граней.</p>
-        </header>
-
-        <div className="explorer-shell">
-          <div className="solid-tabs" role="tablist" aria-label="Выберите многогранник">
-            {bodyTabs.map((tab) => (
-              <button key={tab.key} role="tab" aria-selected={solidKey === tab.key} className={solidKey === tab.key ? "active" : ""} onClick={() => setSolidKey(tab.key)}>
-                <span>{SOLIDS[tab.key].symbol}</span>{tab.short}
-              </button>
-            ))}
+          <div className="hero-orbit" aria-hidden="true">
+            <div className="orbit orbit-a" /><div className="orbit orbit-b" /><div className="hero-symbol">V − E + F</div><div className="hero-equals">= 2</div>
+            <span className="floating-tag tag-one">{`{ p, q }`}</span><span className="floating-tag tag-two">{copy.hero.duality}</span><span className="floating-tag tag-three">{copy.hero.euler}</span>
           </div>
-          <div className="canvas-panel">
-            <div className="canvas-wrap">
-              <SolidCanvas data={solid} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} />
-              <div className="canvas-hint"><Rotate3D size={16} /> тяните, чтобы вращать <span>·</span><ZoomIn size={16} /> колесо — масштаб</div>
-              <div className="solid-title"><span>{solid.symbol}</span><h3>{solid.name}</h3></div>
-            </div>
-            <aside className="control-panel">
-              <div>
-                <span className="panel-label">Комбинаторика</span>
-                <div className="metrics">
-                  <Metric label="вершин" value={c.V} color="var(--viz-vertex)" />
-                  <Metric label="рёбер" value={c.E} color="var(--viz-edge)" />
-                  <Metric label="граней" value={c.F} color={solid.color} />
-                </div>
-                <div className="euler-check">
-                  <div><CircleDot size={17} /> Формула Эйлера</div>
-                  <strong>{c.V} − {c.E} + {c.F} = <span>2</span></strong>
-                </div>
-              </div>
-              <div>
-                <span className="panel-label">Показывать</span>
-                <div className="toggle-row">
-                  <Toggle active={parts.vertices} onClick={() => setParts((v) => ({ ...v, vertices: !v.vertices }))}>Вершины</Toggle>
-                  <Toggle active={parts.edges} onClick={() => setParts((v) => ({ ...v, edges: !v.edges }))}>Рёбра</Toggle>
-                  <Toggle active={parts.faces} onClick={() => setParts((v) => ({ ...v, faces: !v.faces }))}>Грани</Toggle>
-                </div>
-              </div>
-              <div>
-                <span className="panel-label">Режим материала</span>
-                <div className="mode-row">
-                  {(["solid", "glass", "wire"] as DisplayMode[]).map((item) => (
-                    <button key={item} onClick={() => setMode(item)} className={mode === item ? "active" : ""}>
-                      {{ solid: "Сплошной", glass: "Прозрачный", wire: "Каркас" }[item]}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <p className="solid-note">{solid.note}</p>
-            </aside>
-          </div>
-        </div>
-      </section>
+          <div className="scroll-cue"><span>{copy.hero.scroll}</span><ArrowDown size={14} /></div>
+        </section>
 
-      <section className="section duality-section" id="duality">
-        <header className="section-heading inverse">
-          <div><span className="section-index">02</span><div className="eyebrow">Двойственность</div></div>
-          <h2>Грань становится <em>вершиной</em></h2>
-          <p>Поместим точку в центр каждой грани и соединим точки соседних граней. Возникает новый правильный многогранник — двойственный исходному.</p>
-        </header>
-
-        <div className="dual-layout">
-          <div className="dual-stage">
-            <div className="dual-tabs">
-              {dualPairs.map((pair) => (
-                <button key={pair.source} className={dualSource === pair.source ? "active" : ""} onClick={() => { setDualSource(pair.source); setProgress(0); setPlaying(false); }}>
-                  {pair.label}<ArrowLeftRight size={14} />{pair.target}
-                </button>
-              ))}
-            </div>
-            <div className="dual-canvas"><DualCanvas source={source} progress={progress} /></div>
-            <div className="timeline">
-              <button type="button" aria-label={playing ? "Пауза" : "Воспроизвести"} onClick={() => { if (progress >= 1) setProgress(0); setPlaying((v) => !v); }}>
-                {playing ? <Pause size={18} /> : <Play size={18} />}
-              </button>
-              <input aria-label="Ход построения" type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => { setPlaying(false); setProgress(Number(event.target.value)); }} />
-              <button type="button" aria-label="Сбросить" onClick={() => { setPlaying(false); setProgress(0); }}><RotateCcw size={17} /></button>
-              <span>{Math.round(progress * 100)}%</span>
+        <section className="section explore-section light-grid" id="explore">
+          <header className="section-heading"><div><span className="section-index">01</span><div className="eyebrow">{copy.explore.eyebrow}</div></div><h2>{copy.explore.title1}<br /><em>{copy.explore.title2}</em></h2><p>{copy.explore.text}</p></header>
+          <div className="explorer-shell">
+            <div className="solid-tabs" role="tablist" aria-label={copy.explore.choose}>{SOLID_ORDER.map((key) => (
+              <button key={key} type="button" role="tab" aria-selected={solidKey === key} className={solidKey === key ? "active" : ""} onClick={() => setSolidKey(key)}><span>{SOLIDS[key].symbol}</span>{copy.solids[key].short}</button>
+            ))}</div>
+            <div className="canvas-panel">
+              <div className="canvas-wrap dark-stars"><SolidCanvas data={solid} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} /><div className="canvas-hint"><Rotate3D size={16} /> {copy.explore.hintDrag} <span>·</span><ZoomIn size={16} /> {copy.explore.hintZoom}</div><div className="solid-title"><span>{solid.symbol}</span><h3>{copy.solids[solidKey].name}</h3></div></div>
+              <aside className="control-panel">
+                <div><span className="panel-label">{copy.explore.combinatorics}</span><div className="metrics"><Metric label={copy.explore.vertices} value={c.V} color="var(--viz-vertex)" /><Metric label={copy.explore.edges} value={c.E} color="var(--viz-edge)" /><Metric label={copy.explore.faces} value={c.F} color={solid.color} /></div><div className="euler-check"><div><CircleDot size={17} /> {copy.explore.euler}</div><strong>{c.V} − {c.E} + {c.F} = <span>2</span></strong></div></div>
+                <div><span className="panel-label">{copy.explore.show}</span><div className="toggle-row"><Toggle active={parts.vertices} onClick={() => setParts((value) => ({ ...value, vertices: !value.vertices }))}>{copy.explore.vertices}</Toggle><Toggle active={parts.edges} onClick={() => setParts((value) => ({ ...value, edges: !value.edges }))}>{copy.explore.edges}</Toggle><Toggle active={parts.faces} onClick={() => setParts((value) => ({ ...value, faces: !value.faces }))}>{copy.explore.faces}</Toggle></div></div>
+                <div><span className="panel-label">{copy.explore.material}</span><div className="mode-row">{(["solid", "glass", "wire"] as DisplayMode[]).map((item) => <button key={item} type="button" aria-pressed={mode === item} onClick={() => setMode(item)} className={mode === item ? "active" : ""}>{copy.explore.modes[item]}</button>)}</div></div>
+                <p className="solid-note">{copy.solids[solidKey].note}</p>
+              </aside>
             </div>
           </div>
-          <aside className="dual-story">
-            <span className="panel-label">Как читать анимацию</span>
-            {[
-              [0.02, "01", "Центры граней", "В каждой исходной грани возникает новая вершина."],
-              [0.28, "02", "Соседство", "Две новые вершины соединяются, если исходные грани делили ребро."],
-              [0.68, "03", "Новая оболочка", "Рёбра замыкаются в грани двойственного тела."],
-            ].map(([at, number, title, text]) => (
-              <button key={String(number)} className={`story-step ${progress >= Number(at) ? "reached" : ""}`} onClick={() => setProgress(Number(at))}>
-                <span>{number}</span><div><strong>{title}</strong><p>{text}</p></div>
-              </button>
-            ))}
-            <div className="dual-equations">
-              <div><span>V*</span><strong>{targetCounts.V}</strong><small>= F = {sourceCounts.F}</small></div>
-              <div><span>E*</span><strong>{targetCounts.E}</strong><small>= E = {sourceCounts.E}</small></div>
-              <div><span>F*</span><strong>{targetCounts.F}</strong><small>= V = {sourceCounts.V}</small></div>
+        </section>
+
+        <section className="section duality-section dark-stars" id="duality">
+          <header className="section-heading inverse"><div><span className="section-index">02</span><div className="eyebrow">{copy.duality.eyebrow}</div></div><h2>{copy.duality.title1} <em>{copy.duality.title2}</em></h2><p>{copy.duality.text}</p></header>
+          <div className="dual-layout">
+            <div className="dual-stage">
+              <div className="dual-tabs">{copy.duality.pairs.map((pair) => <button key={pair.source} type="button" aria-pressed={dualSource === pair.source} className={dualSource === pair.source ? "active" : ""} onClick={() => { setDualSource(pair.source); setProgress(0); setPlaying(false); }}>{pair.label}<ArrowLeftRight size={14} />{pair.target}</button>)}</div>
+              <div className="dual-canvas"><DualCanvas source={source} progress={progress} /></div>
+              <div className="timeline"><button type="button" aria-label={playing ? copy.duality.pause : copy.duality.play} onClick={() => { if (progress >= 1) setProgress(0); setPlaying((value) => !value); }}>{playing ? <Pause size={18} /> : <Play size={18} />}</button><input aria-label={copy.duality.progress} type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => { setPlaying(false); setProgress(Number(event.target.value)); }} /><button type="button" aria-label={copy.duality.reset} onClick={() => { setPlaying(false); setProgress(0); }}><RotateCcw size={17} /></button><span>{Math.round(progress * 100)}%</span></div>
             </div>
-            <p className="double-dual"><ArrowLeftRight size={16} /> Повторение конструкции меняет местами вершины и грани ещё раз. Поэтому <InlineMath math={`(P^*)^*${TEX}cong P`} /> комбинаторно.</p>
-          </aside>
-        </div>
-      </section>
-
-      <section className="section proof-section" id="proof">
-        <header className="section-heading">
-          <div><span className="section-index">03</span><div className="eyebrow">Теорема</div></div>
-          <h2>Почему их <em>ровно пять?</em></h2>
-          <p>Аргумент короткий, но в нём важно не перепутать две задачи: исключить все прочие варианты и построить каждый из оставшихся.</p>
-        </header>
-
-        <div className="proof-shell">
-          <div className="proof-steps" role="tablist" aria-label="Шаги доказательства">
-            {proofSteps.map((step, index) => (
-              <button key={step.kicker} role="tab" aria-selected={proofStep === index} className={proofStep === index ? "active" : proofStep > index ? "done" : ""} onClick={() => setProofStep(index)}>
-                <span>{proofStep > index ? <Check size={15} /> : index + 1}</span><small>{step.title}</small>
-              </button>
-            ))}
+            <aside className="dual-story"><span className="panel-label">{copy.duality.guide}</span>{copy.duality.story.map((story, index) => { const at = [0.02, 0.28, 0.68][index]; return <button key={story.number} type="button" className={`story-step ${progress >= at ? "reached" : ""}`} onClick={() => { setPlaying(false); setProgress(at); }}><span>{story.number}</span><div><strong>{story.title}</strong><p>{story.text}</p></div></button>; })}<div className="dual-equations"><div><span>V*</span><strong>{targetCounts.V}</strong><small>= F = {sourceCounts.F}</small></div><div><span>E*</span><strong>{targetCounts.E}</strong><small>= E = {sourceCounts.E}</small></div><div><span>F*</span><strong>{targetCounts.F}</strong><small>= V = {sourceCounts.V}</small></div></div><p className="double-dual"><ArrowLeftRight size={16} /><span>{copy.duality.doubleDual} <InlineMath math="(P^*)^*\cong P" /></span></p></aside>
           </div>
-          <article className="proof-card">
-            <div className="proof-copy">
-              <div className="eyebrow">{selectedStep.kicker}</div>
-              <h3>{selectedStep.title}</h3>
-              <p>{selectedStep.text}</p>
-              <div className="formula-card"><BlockMath math={selectedStep.formula} /></div>
-              <div className="proof-note"><CircleDot size={17} /><span>{selectedStep.note}</span></div>
-            </div>
-            <div className="proof-visual" aria-hidden="true">
-              <div className={`proof-glyph glyph-${proofStep + 1}`}>
-                <span className="g-circle circle-one">p</span>
-                <span className="g-circle circle-two">q</span>
-                <span className="g-line" />
-                <strong>{proofStep === 3 ? "5" : proofStep === 4 ? "∎" : "χ"}</strong>
-              </div>
-              <div className="proof-caption">{["граф на сфере", "каждое ребро — дважды", "положительная кривизна", "конечный список", "пять явных моделей"][proofStep]}</div>
-            </div>
-          </article>
-          <div className="proof-nav">
-            <button type="button" disabled={proofStep === 0} onClick={() => setProofStep((v) => Math.max(0, v - 1))}>Назад</button>
-            <span>{proofStep + 1} / {proofSteps.length}</span>
-            <button
-              className="proof-next"
-              type="button"
-              onClick={() => {
-                if (proofStep < proofSteps.length - 1) {
-                  setProofStep((current) => current + 1);
-                } else {
-                  document.getElementById("lab")?.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-            >
-              {proofStep === proofSteps.length - 1 ? "В лабораторию" : "Дальше"} <ChevronRight size={15} />
-            </button>
+        </section>
+
+        <section className="section proof-section light-grid" id="proof">
+          <header className="section-heading"><div><span className="section-index">03</span><div className="eyebrow">{copy.proof.eyebrow}</div></div><h2>{copy.proof.title1} <em>{copy.proof.title2}</em></h2><p>{copy.proof.text}</p></header>
+          <div className="proof-shell">
+            <div className="proof-choice"><CircleDot size={16} />{copy.proof.choose}</div>
+            <div className="proof-steps" role="tablist" aria-label={copy.proof.stepsAria}>{copy.proof.steps.map((step, index) => <button key={step.kicker} type="button" role="tab" aria-selected={proofStep === index} className={proofStep === index ? "active" : proofStep > index ? "done" : ""} onClick={() => setProofStep(index)}><span>{proofStep > index ? <Check size={16} /> : index + 1}</span><small>{step.short}</small></button>)}</div>
+            <article className="proof-card"><div className="proof-copy"><div className="eyebrow">{selectedStep.kicker}</div><h3>{selectedStep.title}</h3><p>{selectedStep.text}</p><div className="formula-card"><BlockMath math={selectedStep.formula} /></div><div className="proof-note"><CircleDot size={17} /><span>{selectedStep.takeaway}</span></div></div><ProofVisual step={proofStep} locale={locale} copy={copy} stepCopy={selectedStep} /></article>
+            <div className="proof-nav"><button type="button" disabled={proofStep === 0} onClick={() => setProofStep((value) => Math.max(0, value - 1))}>{copy.proof.back}</button><span>{proofStep + 1} / {copy.proof.steps.length}</span><button className="proof-next" type="button" onClick={() => { if (proofStep < copy.proof.steps.length - 1) setProofStep((current) => current + 1); else document.getElementById("lab")?.scrollIntoView({ behavior: "smooth" }); }}>{proofStep === copy.proof.steps.length - 1 ? copy.proof.toLab : copy.proof.next} <ChevronRight size={15} /></button></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="section lab-section" id="lab">
-        <header className="section-heading inverse">
-          <div><span className="section-index">04</span><div className="eyebrow">Лаборатория {`{p,q}`}</div></div>
-          <h2>Попробуйте найти <em>шестое</em></h2>
-          <p>Меняйте число сторон грани p и число рёбер при вершине q. Сферическая кривизна сразу покажет, где пространство «закрывается».</p>
-        </header>
-
-        <div className="lab-grid">
-          <div className="sliders-card">
-            <div className="slider-block">
-              <div><label htmlFor="polygon-sides">Сторон в грани</label><strong>p = {p}</strong></div>
-              <input id="polygon-sides" type="range" min="3" max="8" value={p} onChange={(e) => setP(Number(e.target.value))} />
-              <div className="ticks">{[3,4,5,6,7,8].map((n) => <span key={n}>{n}</span>)}</div>
-            </div>
-            <div className="slider-block">
-              <div><label htmlFor="vertex-edges">Рёбер при вершине</label><strong>q = {q}</strong></div>
-              <input id="vertex-edges" type="range" min="3" max="8" value={q} onChange={(e) => setQ(Number(e.target.value))} />
-              <div className="ticks">{[3,4,5,6,7,8].map((n) => <span key={n}>{n}</span>)}</div>
-            </div>
-            <button className="swap-button" type="button" onClick={() => { setP(q); setQ(p); }}><ArrowLeftRight size={16} /> Поменять p и q — перейти к двойственному</button>
+        <section className="section lab-section dark-stars" id="lab">
+          <header className="section-heading inverse"><div><span className="section-index">04</span><div className="eyebrow">{copy.lab.eyebrow}</div></div><h2>{copy.lab.title1} <em>{copy.lab.title2}</em></h2><p>{copy.lab.text}</p></header>
+          <div className="lab-grid">
+            <div className="sliders-card"><div className="slider-block"><div><label htmlFor="polygon-sides">{copy.lab.polygonSides}</label><strong>p = {p}</strong></div><input id="polygon-sides" type="range" min="3" max="8" value={p} onChange={(event) => setP(Number(event.target.value))} /><div className="ticks">{[3,4,5,6,7,8].map((value) => <span key={value}>{value}</span>)}</div></div><div className="slider-block"><div><label htmlFor="vertex-edges">{copy.lab.vertexEdges}</label><strong>q = {q}</strong></div><input id="vertex-edges" type="range" min="3" max="8" value={q} onChange={(event) => setQ(Number(event.target.value))} /><div className="ticks">{[3,4,5,6,7,8].map((value) => <span key={value}>{value}</span>)}</div></div><button className="swap-button" type="button" onClick={() => { setP(q); setQ(p); }}><ArrowLeftRight size={16} /> {copy.lab.swap}</button></div>
+            <div className={`verdict-card ${eulerPass ? "pass" : "fail"}`}><div className="verdict-icon">{eulerPass ? <Check size={28} /> : <X size={28} />}</div><span className="panel-label">{copy.lab.eulerCheck}</span><BlockMath math={`\\frac{1}{${p}}+\\frac{1}{${q}}=${lhs.toFixed(3)}${eulerPass ? ">" : "\\le"}\\frac{1}{2}`} /><h3>{match ? copy.solids[match].name : eulerPass ? copy.lab.candidate : copy.lab.impossible}</h3><p>{match ? copy.lab.matchText.replace("{symbol}", SOLIDS[match].symbol) : eulerPass ? copy.lab.candidateText : copy.lab.impossibleText}</p>{pairValues && Number.isInteger(pairValues.E) && <div className="mini-values"><span>V = {pairValues.V}</span><span>E = {pairValues.E}</span><span>F = {pairValues.F}</span></div>}</div>
           </div>
-
-          <div className={`verdict-card ${eulerPass ? "pass" : "fail"}`}>
-            <div className="verdict-icon">{eulerPass ? <Check size={28} /> : <X size={28} />}</div>
-            <span className="panel-label">Проверка Эйлера</span>
-            <BlockMath math={`${TEX}frac{1}{${p}}+${TEX}frac{1}{${q}}=${lhs.toFixed(3)}${eulerPass ? ">" : `${TEX}le`}${TEX}frac{1}{2}`} />
-            <h3>{match ? SOLIDS[match].name : eulerPass ? "Кандидат проходит условие" : "Такого тела быть не может"}</h3>
-            <p>{match ? `Это символ Шлефли ${SOLIDS[match].symbol}. Все необходимые числа целые, а модель существует.` : eulerPass ? "Неравенство выполнено, но проверьте целочисленность и явную конструкцию." : "Угловая сумма не оставляет положительной сферической кривизны."}</p>
-            {pairValues && Number.isInteger(pairValues.E) && (
-              <div className="mini-values"><span>V = {pairValues.V}</span><span>E = {pairValues.E}</span><span>F = {pairValues.F}</span></div>
-            )}
-          </div>
-        </div>
-
-        <div className="pair-table">
-          <div className="pair-head"><span>Все допустимые пары</span><span>Двойственные пары расположены зеркально</span></div>
-          <div className="pair-cards">
-            {pairCards.map(({ data, counts: itemCounts }) => (
-              <button key={data.key} className={match === data.key ? "active" : ""} onClick={() => { setP(data.p); setQ(data.q); }}>
-                <div className="pair-symbol">{data.symbol}</div>
-                <strong>{data.name}</strong>
-                <span>{data.p}-угольник · {data.q} при вершине</span>
-                <div><small>V {itemCounts.V}</small><small>E {itemCounts.E}</small><small>F {itemCounts.F}</small></div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <div><span className="brand-mark"><Shapes aria-hidden="true" size={16} /></span><strong>Пять тел. Два подсчёта. Одна сфера.</strong></div>
-        <p>Интерактивный атлас правильных выпуклых многогранников.</p>
-        <a href="#top">Наверх ↑</a>
-      </footer>
+          <div className="pair-table"><div className="pair-head"><span>{copy.lab.allPairs}</span><span>{copy.lab.mirror}</span></div><div className="pair-cards">{pairCards.map(({ data, counts: itemCounts }) => <button key={data.key} type="button" aria-pressed={match === data.key} className={match === data.key ? "active" : ""} onClick={() => { setP(data.p); setQ(data.q); }}><div className="pair-symbol">{data.symbol}</div><strong>{copy.solids[data.key].name}</strong><span>{data.p}{copy.lab.polygon} · {data.q} {copy.lab.atVertex}</span><div><small>V {itemCounts.V}</small><small>E {itemCounts.E}</small><small>F {itemCounts.F}</small></div></button>)}</div></div>
+        </section>
+        <footer><div><span className="brand-mark"><Shapes aria-hidden="true" size={16} /></span><strong>{copy.footer.statement}</strong></div><p>{copy.footer.text}</p><a href="#top">{copy.footer.top}</a></footer>
       </main>
     </>
   );

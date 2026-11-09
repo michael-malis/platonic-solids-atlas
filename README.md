@@ -2,15 +2,19 @@
 
 Interactive 3D educational mini-site about the five Platonic solids, geometric duality, Euler's formula, and the proof that there are exactly five regular convex polyhedra.
 
-**Live site:** https://michael-malis.github.io/platonic-solids-atlas/
+**Live site (English):** https://michael-malis.github.io/platonic-solids-atlas/
+
+**Русская версия:** https://michael-malis.github.io/platonic-solids-atlas/ru/
 
 ## Features
 
 - Interactive Three.js models of all five Platonic solids.
 - Vertex, edge, face, material, and Euler-characteristic controls.
 - Animated construction of dual polyhedra.
-- Step-by-step proof using Euler's formula.
+- Five synchronized visual proof steps using Euler's formula.
 - A `{p, q}` laboratory for exploring the admissible pairs.
+- English and Russian routes with localized metadata.
+- Demand-driven 3D rendering for lower idle CPU/GPU usage.
 
 ## Run locally
 
