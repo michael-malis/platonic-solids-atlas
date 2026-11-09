@@ -180,8 +180,7 @@ em { font-family: "Crimson Pro", Georgia, "Times New Roman", serif; font-weight:
 .mode-row button.active { background: white; color: var(--ink); font-weight: 750; }
 .solid-note { border-top: 1px solid rgba(255,255,255,.1); color: #c1ced8; font-family: "Crimson Pro", Georgia, serif; font-size: 18px; font-style: italic; line-height: 1.45; margin: 0; padding-top: 20px; }
 
-.duality-section, .lab-section { background-color: var(--ink); color: white; }
-.duality-section { overflow: hidden; }
+.duality-section, .lab-section { background-color: var(--ink); color: white; overflow: clip; }
 .duality-section::before, .lab-section::before { border: 1px solid rgba(255,255,255,.05); border-radius: 50%; content: ""; height: 700px; pointer-events: none; position: absolute; right: -300px; top: -260px; width: 700px; }
 .dual-layout { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr) 370px; margin: 0 auto; max-width: 1280px; position: relative; z-index: 1; }
 .dual-stage { background: #091a2b; border: 1px solid rgba(255,255,255,.10); border-radius: var(--radius); min-height: 620px; overflow: hidden; position: relative; }
@@ -330,6 +329,10 @@ footer .brand-mark { height: 28px; width: 28px; }
 footer p { color: #b7c7d3; font-size: 14px; }
 footer > a { color: var(--mint-soft); font-size: 15px; font-weight: 700; justify-self: end; min-height: 44px; padding: 12px 0; }
 
+@media (width >= 112rem) {
+  #root { zoom: 1.18; }
+}
+
 @media (max-width: 1050px) {
   .nav-links { display: none; }
   .topbar { grid-template-columns: 1fr 1fr; }
@@ -372,8 +375,19 @@ footer > a { color: var(--mint-soft); font-size: 15px; font-weight: 700; justify
   .section-heading .eyebrow { align-self: center; }
   .section-heading h2 { font-size: 46px; margin: 19px 0; }
   .section-heading > p { font-size: 17px; }
-  .solid-tabs { overflow-x: auto; }
-  .solid-tabs button { min-width: 100px; }
+  .solid-tabs {
+    grid-auto-columns: 140px;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    justify-content: start;
+    overscroll-behavior-inline: contain;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .solid-tabs::-webkit-scrollbar { display: none; }
+  .solid-tabs button { min-width: 0; scroll-snap-align: start; white-space: nowrap; }
+  .solid-tabs button span { flex: 0 0 auto; white-space: nowrap; }
   .canvas-panel { display: block; }
   .control-panel { display: flex; }
   .canvas-wrap, .dual-canvas { height: 460px; min-height: 460px; }

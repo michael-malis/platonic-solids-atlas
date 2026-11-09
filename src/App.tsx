@@ -144,7 +144,7 @@ export default function Home() {
           <header className="section-heading"><div><span className="section-index">01</span><div className="eyebrow">{copy.explore.eyebrow}</div></div><h2>{copy.explore.title1}<br /><em>{copy.explore.title2}</em></h2><p>{copy.explore.text}</p></header>
           <div className="explorer-shell">
             <div className="solid-tabs" role="tablist" aria-label={copy.explore.choose}>{SOLID_ORDER.map((key) => (
-              <button key={key} type="button" role="tab" aria-selected={solidKey === key} className={solidKey === key ? "active" : ""} onClick={() => setSolidKey(key)}><span>{SOLIDS[key].symbol}</span>{copy.solids[key].short}</button>
+              <button key={key} type="button" role="tab" aria-selected={solidKey === key} className={solidKey === key ? "active" : ""} onClick={(event) => { setSolidKey(key); event.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); }}><span>{SOLIDS[key].symbol}</span>{copy.solids[key].short}</button>
             ))}</div>
             <div className="canvas-panel">
               <div className="canvas-wrap dark-stars"><SolidCanvas data={solid} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} /><div className="canvas-hint"><Rotate3D size={16} /> {copy.explore.hintDrag} <span>·</span><ZoomIn size={16} /> {copy.explore.hintZoom}</div><div className="solid-title"><span>{solid.symbol}</span><h3>{copy.solids[solidKey].name}</h3></div></div>
