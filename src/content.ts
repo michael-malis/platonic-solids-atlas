@@ -89,11 +89,11 @@ const en: SiteCopy = {
     modes: { solid: "Solid", glass: "Transparent", wire: "Wireframe" },
   },
   solids: {
-    tetra: { name: "Tetrahedron", short: "Tetra", note: "Four equilateral triangles. It is self-dual." },
+    tetra: { name: "Tetrahedron", short: "Tetrahedron", note: "Four equilateral triangles. It is self-dual." },
     cube: { name: "Cube", short: "Cube", note: "Six squares; three faces meet at every vertex." },
-    octa: { name: "Octahedron", short: "Octa", note: "Eight triangles; dual to the cube." },
-    dodeca: { name: "Dodecahedron", short: "Dodeca", note: "Twelve regular pentagons; dual to the icosahedron." },
-    icosa: { name: "Icosahedron", short: "Icosa", note: "Twenty triangles; dual to the dodecahedron." },
+    octa: { name: "Octahedron", short: "Octahedron", note: "Eight triangles; dual to the cube." },
+    dodeca: { name: "Dodecahedron", short: "Dodecahedron", note: "Twelve regular pentagons; dual to the icosahedron." },
+    icosa: { name: "Icosahedron", short: "Icosahedron", note: "Twenty triangles; dual to the dodecahedron." },
   },
   duality: {
     eyebrow: "Duality",
@@ -240,11 +240,11 @@ const ru: SiteCopy = {
     modes: { solid: "Сплошной", glass: "Прозрачный", wire: "Каркас" },
   },
   solids: {
-    tetra: { name: "Тетраэдр", short: "Тетра", note: "Четыре равносторонних треугольника. Самодвойственен." },
+    tetra: { name: "Тетраэдр", short: "Тетраэдр", note: "Четыре равносторонних треугольника. Самодвойственен." },
     cube: { name: "Куб", short: "Куб", note: "Шесть квадратов; в каждой вершине встречаются три грани." },
-    octa: { name: "Октаэдр", short: "Окта", note: "Восемь треугольников; двойственен кубу." },
-    dodeca: { name: "Додекаэдр", short: "Додека", note: "Двенадцать правильных пятиугольников; двойственен икосаэдру." },
-    icosa: { name: "Икосаэдр", short: "Икоса", note: "Двадцать треугольников; двойственен додекаэдру." },
+    octa: { name: "Октаэдр", short: "Октаэдр", note: "Восемь треугольников; двойственен кубу." },
+    dodeca: { name: "Додекаэдр", short: "Додекаэдр", note: "Двенадцать правильных пятиугольников; двойственен икосаэдру." },
+    icosa: { name: "Икосаэдр", short: "Икосаэдр", note: "Двадцать треугольников; двойственен додекаэдру." },
   },
   duality: {
     eyebrow: "Двойственность",

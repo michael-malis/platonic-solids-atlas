@@ -128,13 +128,19 @@ em { font-family: "Crimson Pro", Georgia, "Times New Roman", serif; font-weight:
 }
 .proof-section.light-grid { background-color: var(--paper-2); }
 .dark-stars {
+  --sky-glow-1: radial-gradient(ellipse 75% 48% at 18% -8%, rgba(27, 111, 129, .18), transparent 72%);
+  --sky-glow-2: radial-gradient(ellipse 62% 44% at 94% 104%, rgba(33, 66, 109, .18), transparent 74%);
   background-color: var(--ink);
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(255,255,255,.26) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 74% 32%, rgba(94,234,212,.24) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 42% 76%, rgba(255,255,255,.16) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 88% 86%, rgba(217,119,6,.16) 0 1px, transparent 1.5px);
-  background-size: 150px 150px, 210px 210px, 270px 270px, 330px 330px;
+    var(--sky-glow-1),
+    var(--sky-glow-2),
+    radial-gradient(circle at 19px 27px, rgba(226, 245, 255, .62) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 83px 119px, rgba(137, 226, 220, .45) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 151px 53px, rgba(255, 255, 255, .36) 0 .75px, transparent 1.35px),
+    radial-gradient(circle at 43px 181px, rgba(182, 208, 232, .30) 0 .75px, transparent 1.35px),
+    radial-gradient(circle at 211px 91px, rgba(255, 220, 169, .28) 0 1px, transparent 1.55px);
+  background-position: center, center, 0 0, 37px 61px, 101px 17px, 13px 109px, 71px 43px;
+  background-size: 100% 100%, 100% 100%, 173px 181px, 263px 277px, 347px 359px, 431px 419px, 557px 541px;
 }
 .section-heading { align-items: end; display: grid; gap: 32px; grid-template-columns: minmax(120px, .24fr) minmax(0, 1fr) minmax(280px, .5fr); margin: 0 auto 48px; max-width: 1280px; }
 .section-heading h2 { font-size: clamp(43px, 5vw, 69px); margin: 0; }
@@ -155,7 +161,7 @@ em { font-family: "Crimson Pro", Georgia, "Times New Roman", serif; font-weight:
 .solid-tabs button.active span { color: #14998b; }
 .canvas-panel { background: var(--ink); border-radius: var(--radius); box-shadow: var(--shadow-card); display: grid; grid-template-columns: minmax(0, 1fr) 350px; min-height: 620px; overflow: hidden; }
 .canvas-wrap { background: radial-gradient(circle at 55% 35%, #183850 0%, #091929 46%, #05101c 100%); min-height: 620px; overflow: hidden; position: relative; }
-.canvas-wrap.dark-stars { background-color: #05101c; background-image: radial-gradient(circle at 55% 35%, rgba(24,56,80,.94) 0%, rgba(9,25,41,.96) 46%, rgba(5,16,28,.98) 100%), radial-gradient(circle at 22% 28%, rgba(255,255,255,.28) 0 1px, transparent 1.5px), radial-gradient(circle at 78% 66%, rgba(94,234,212,.24) 0 1px, transparent 1.5px); background-size: auto, 150px 150px, 220px 220px; }
+.canvas-wrap.dark-stars { --sky-glow-1: radial-gradient(circle at 55% 35%, rgba(24, 65, 87, .76) 0%, rgba(9, 27, 43, .88) 48%, rgba(5, 16, 28, .98) 100%); --sky-glow-2: radial-gradient(ellipse 65% 48% at 92% 100%, rgba(20, 69, 91, .13), transparent 75%); background-color: #05101c; }
 .canvas-wrap canvas, .dual-canvas canvas { touch-action: none; }
 .solid-title { left: 28px; position: absolute; top: 26px; }
 .solid-title span { color: var(--mint-soft); font-family: "Crimson Pro", Georgia, serif; font-size: 17px; }
@@ -336,6 +342,19 @@ footer > a { color: var(--mint-soft); font-size: 15px; font-weight: 700; justify
 @media (max-width: 1050px) {
   .nav-links { display: none; }
   .topbar { grid-template-columns: 1fr 1fr; }
+  .solid-tabs {
+    grid-auto-columns: 190px;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    justify-content: start;
+    overscroll-behavior-inline: contain;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .solid-tabs::-webkit-scrollbar { display: none; }
+  .solid-tabs button { min-width: 0; scroll-snap-align: start; white-space: nowrap; }
+  .solid-tabs button span { flex: 0 0 auto; white-space: nowrap; }
   .hero { grid-template-columns: 1fr; padding-top: 130px; }
   .hero-orbit { position: absolute; right: -70px; top: 20%; width: 48vw; }
   .hero-copy { max-width: 720px; }
@@ -375,19 +394,6 @@ footer > a { color: var(--mint-soft); font-size: 15px; font-weight: 700; justify
   .section-heading .eyebrow { align-self: center; }
   .section-heading h2 { font-size: 46px; margin: 19px 0; }
   .section-heading > p { font-size: 17px; }
-  .solid-tabs {
-    grid-auto-columns: 140px;
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    justify-content: start;
-    overscroll-behavior-inline: contain;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-  }
-  .solid-tabs::-webkit-scrollbar { display: none; }
-  .solid-tabs button { min-width: 0; scroll-snap-align: start; white-space: nowrap; }
-  .solid-tabs button span { flex: 0 0 auto; white-space: nowrap; }
   .canvas-panel { display: block; }
   .control-panel { display: flex; }
   .canvas-wrap, .dual-canvas { height: 460px; min-height: 460px; }
