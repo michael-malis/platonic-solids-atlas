@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { BlockMath } from "./math";
 import {
   ArrowDown, ArrowLeftRight, Check, ChevronRight, CircleDot, Eye, EyeOff,
@@ -77,12 +77,11 @@ export default function Home() {
   const targetCounts = counts(target);
 
   useEffect(() => { applyRuntimeMetadata(locale); }, [locale]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Fragment targets do not exist until React has mounted the page.
     const section = window.location.hash.slice(1);
     if (!section) return;
-    const frame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: "instant" }));
-    return () => cancelAnimationFrame(frame);
+    document.getElementById(section)?.scrollIntoView({ behavior: "instant" });
   }, []);
   useEffect(() => {
     const syncLocale = () => setLocale(localeFromPath());

@@ -44,3 +44,7 @@ Idle observation: zero new WebGL draw calls. Rotation and zoom produce frames. O
 ## Rollback
 
 Use `git log` for the three independent content, starfield and performance changes. Revert the unwanted change with a new commit and deploy through the existing workflow. Do not reset main or move pre-bilingual-redesign-2026-11-09.
+
+### Final responsive and deep-link checks
+
+Additional 390/500 px checks found a long Russian hero word clipping despite no document-level overflow. Scoped mobile Russian heading sizing and normal-flow hero illustration fix clipping and button overlap; heading scrollWidth now equals clientWidth at both sizes. Direct section fragments are scrolled during layout after React creates their targets. Pages-base local EN/RU routes and interactions pass.

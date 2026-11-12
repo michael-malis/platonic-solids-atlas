@@ -426,9 +426,10 @@ footer > a { color: var(--mint-soft); font-size: 15px; font-weight: 700; justify
   .brand-mark { height: 29px; width: 29px; }
   .nav-actions { gap: 7px; }
   .language-switch button { min-width: 34px; padding-inline: 7px; }
-  .hero { min-height: 820px; padding: 115px 20px 70px; }
+  .hero { min-height: 820px; padding: 115px 20px 70px; row-gap: 30px; }
   .hero h1 { font-size: clamp(49px, 15vw, 73px); }
-  .hero-orbit { bottom: 30px; left: 50%; right: auto; top: auto; transform: translateX(-50%); width: 330px; }
+  :lang(ru) .hero h1 { font-size: clamp(32px, 11vw, 65px); }
+  .hero-orbit { bottom: auto; left: auto; position: relative; right: auto; top: auto; transform: none; width: min(330px, 100%); }
   .hero-copy { align-self: start; }
   .hero-copy > p { font-size: 18px; max-width: 500px; }
   .scroll-cue { display: none; }
