@@ -13,22 +13,22 @@ Draft both languages before integration; independent subagent review with full c
 - [x] A3 Read design and mathematics skills; agree restrained application.
 - [x] A4 Confirm audience, preserve design, independent editorial review.
 - [x] A5 Create this tracker and HANDOFF.md.
-- [ ] A6 Capture baseline build, screenshots and performance.
-- [ ] B1 Write Russian content draft tied to visuals.
-- [ ] B2 Write corresponding English content.
-- [ ] B3 Independent subagent critique of both languages and mathematical claims.
-- [ ] B4 Adjudicate review and finalize copy.
-- [ ] B5 Integrate bilingual content: definition, five profiles, duality, proof, angle laboratory.
-- [ ] C1 Correct definition diagram and reciprocal-coordinate boundary; preserve integer grid.
-- [ ] C2 Replace star gradients with subtle irregular static local SVG; preserve light grid.
-- [ ] C3 Separate lightweight data from Three.js and lazy-load scenes near viewport.
-- [ ] C4 Measure and remove unnecessary animation/render work; preserve camera state.
-- [ ] C5 Review layouts at 390, 768, 1024, 1440, 1920 and 2560 px, including 2560×1440.
-- [ ] D1 Verify geometry, duality, angle calculations, KaTeX and interactions.
-- [ ] D2 Review screenshots and EN/RU parity, navigation and state preservation.
-- [ ] D3 Compare production chunks and idle/offscreen work with baseline.
-- [ ] D4 Publish via existing GitHub Actions; verify live EN and RU.
-- [ ] D5 Record outcome, remaining limits and rollback instructions.
+- [x] A6 Capture baseline build, screenshots and performance.
+- [x] B1 Write Russian content draft tied to visuals.
+- [x] B2 Write corresponding English content.
+- [x] B3 Independent subagent critique of both languages and mathematical claims.
+- [x] B4 Adjudicate review and finalize copy.
+- [x] B5 Integrate bilingual content: definition, five profiles, duality, proof, angle laboratory.
+- [x] C1 Correct definition diagram and reciprocal-coordinate boundary; preserve integer grid.
+- [x] C2 Replace star gradients with subtle irregular static local SVG; preserve light grid.
+- [x] C3 Separate lightweight data from Three.js and lazy-load scenes near viewport.
+- [x] C4 Measure and remove unnecessary animation/render work; preserve camera state.
+- [x] C5 Review layouts at 390, 768, 1024, 1440, 1920 and 2560 px, including 2560×1440.
+- [x] D1 Verify geometry, duality, angle calculations, KaTeX and interactions.
+- [x] D2 Review screenshots and EN/RU parity, navigation and state preservation.
+- [x] D3 Compare production chunks and idle/offscreen work with baseline.
+- [x] D4 Publish via existing GitHub Actions; verify live EN and RU.
+- [x] D5 Record outcome, remaining limits and rollback instructions.
 
 ## Acceptance and implementation
 
@@ -63,3 +63,15 @@ All tasks complete. Published EN / and RU /ru/ return HTTP 200; the current entr
 Final Pages-base browser tests (390 px RU and 2560×1440 EN): no captured errors, no KaTeX errors, zero idle draws, responsive layout without overflow; rotation/zoom work, Canvas survives locale switches, offscreen/hidden progress pauses, direct section fragments start at the intended nonzero scroll position. Synthetic pointer tests account for the lack of native pointer capture in dispatched events. Additional 500 px hero check passes.
 
 Live: https://michael-malis.github.io/platonic-solids-atlas/ and https://michael-malis.github.io/platonic-solids-atlas/ru/. Auto-deploy remains enabled for main. Rollback: revert the relevant content, starfield, performance or responsive-fix commit and let the workflow redeploy; retain the historical rollback tag. Browser checks simulate mobile viewports, not physical devices. Large 3D bundle remains deferred rather than eliminated. No active implementation tasks remain.
+
+## Follow-up: wide-screen scale and inline math
+
+User confirms scale is still too small on the full-page view, and requests formulas in LaTeX. Preserve visual identity and phone sizing. Baseline at 2560×1440: root zoom 1.18, explorer 1510 px, proof/lab 1392 px. Target: root scale 1.5 at 2560, explorer/proof/lab about 1920 px; fluid growth from 1600 px, unchanged below that. Existing offset-based Canvas sizing remains mandatory. Render inline notation/fractions/angles with KaTeX, not only display formulas.
+
+- [x] S1 Measure current scale and choose a scoped responsive correction.
+- [x] S2 Implement fluid wide-screen scale and aligned section widths.
+- [x] S3 Mark and render inline mathematical notation in both languages.
+- [x] S4 Verify all formulas, responsive widths, Canvas stability and interactions.
+- [ ] S5 Publish, verify live EN/RU and record evidence.
+
+S2–S4 evidence: Pages-base production build and `npm run verify` pass, including 140 inline formulas. Chrome checks at 390, 768, 1024, 1440, 1920 and 2560×1440 report no overflow, captured JS/KaTeX errors or raw math delimiters. At 2560, all three main shells measure 1920 px; at 390 they remain 358 px. Screenshot review confirms angle values render on one line after limiting UI span selectors to direct children. Rotation, zoom, materials, five steps, Next, laboratory, locale/history, persistent Canvas, zero idle draws and offscreen/hidden pause pass. See docs/verification.md. Publication remains pending.

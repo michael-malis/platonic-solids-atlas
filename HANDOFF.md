@@ -4,7 +4,7 @@ Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](
 
 ## Active Work
 
-No active tasks. All checklist items in MASTER_PLAN.md are verified. Published source 6d3eb08 passed Actions and live EN/RU checks. Review evidence and rollback in docs/verification.md.
+Active follow-up: MASTER_PLAN.md task S5. Wide-screen scale and EN/RU inline KaTeX are implemented and verified at six widths; all main shells measure 1920 px at 2560×1440. Next: commit and push, wait for Pages Actions, verify public EN/RU and current assets, then close S5. Prior approval-review usage limit cleared on retry; GitHub authentication and unchanged remote main confirmed.
 
 ## Decisions
 

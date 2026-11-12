@@ -77,5 +77,18 @@ near(angleData(3,5).defect,60);near(angleData(4,4).defect,0);near(angleData(5,4)
 const { COPY } = load("src/content.ts");
 const katex = nativeRequire("katex");
 for (const locale of ["en","ru"]) for (const step of COPY[locale].proof.steps) katex.renderToString(step.formula,{throwOnError:true});
+let inlineFormulas = 0;
+function verifyInline(value) {
+  if (typeof value === "string") {
+    const parts = value.split(/(\$[^$]+\$)/g);
+    for (const part of parts) {
+      if (part.startsWith("$") && part.endsWith("$")) {
+        katex.renderToString(part.slice(1,-1), { throwOnError: true });
+        inlineFormulas++;
+      } else assert.ok(!part.includes("$"), `Unbalanced inline math: ${value}`);
+    }
+  } else if (value && typeof value === "object") Object.values(value).forEach(verifyInline);
+}
+verifyInline(COPY);
 assert.deepEqual(Object.keys(COPY.en.atlas.profiles), Object.keys(COPY.ru.atlas.profiles));
-console.log("PASS: five hulls, regular faces, outward orientation, convexity, degrees, edge incidences, Euler, duals/double duals; 36 angle pairs; EN/RU proof KaTeX.");
+console.log(`PASS: five hulls, regular faces, outward orientation, convexity, degrees, edge incidences, Euler, duals/double duals; 36 angle pairs; EN/RU proof KaTeX and ${inlineFormulas} inline formulas.`);

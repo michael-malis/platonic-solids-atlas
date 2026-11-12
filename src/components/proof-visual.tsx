@@ -1,3 +1,4 @@
+import { InlineMath, MathText } from "../math";
 import { ArrowLeftRight, Check } from "lucide-react";
 import type { Locale, ProofStepCopy, SiteCopy } from "../content";
 import { counts, SOLID_ORDER, SOLID_INFO } from "../lib/solid-data";
@@ -137,7 +138,7 @@ function ExistenceDiagram({ copy }: { copy: SiteCopy }) {
           <div className={`existence-card solid-${key}`} key={key}>
             <div className="mini-solid"><span /><span /><span /></div>
             <strong>{copy.solids[key].name}</strong>
-            <small>{solid.symbol}</small>
+            <small><InlineMath math={`\\{${solid.p},${solid.q}\\}`} /></small>
             <div><span>V {c.V}</span><span>E {c.E}</span><span>F {c.F}</span></div>
           </div>
         );
@@ -157,7 +158,7 @@ export function ProofVisual({ step, locale, copy, stepCopy }: ProofVisualProps) 
         {step === 3 && <EnumerationDiagram locale={locale} />}
         {step === 4 && <ExistenceDiagram copy={copy} />}
       </div>
-      <div className="proof-caption">{stepCopy.visualCaption}</div>
+      <div className="proof-caption"><MathText text={stepCopy.visualCaption} /></div>
     </div>
   );
 }

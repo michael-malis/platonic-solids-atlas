@@ -52,3 +52,11 @@ Additional 390/500 px checks found a long Russian hero word clipping despite no 
 ### Publication result
 
 Published source 6d3eb08: successful workflow https://github.com/michael-malis/platonic-solids-atlas/actions/runs/43288288908. EN and RU HTML, current JS, deferred scene JS, CSS and star SVG return HTTP 200. Public Chrome DOM includes new profiles, angle explanations and rendered KaTeX; 3D mounts near the scene. Local Pages-base direct-fragment tests start at scrollY 2809 (EN duality, 2560×1440) and 7982 (RU laboratory, 390 px), with no captured errors. Public headless screenshots are used to check rendering, while the same-origin harness checks precise scroll behavior and interactions.
+
+### Follow-up: wide-screen scale and inline KaTeX
+
+Production build and mathematics verification pass, including 140 inline expressions in EN/RU. Copy marks inline mathematics explicitly; surrounding prose remains ordinary text. Schläfli symbols, dual counts, fractions, angle values and proof notation use KaTeX. UI span selectors are scoped to direct children so they do not apply layout, padding or font overrides to KaTeX's nested spans.
+
+Chrome rechecked 390, 768, 1024, 1440, 1920 and 2560×1440. All reports have no captured JS errors, KaTeX errors, unrendered dollar delimiters or document overflow. Root scaling is unchanged below 1600 px, 1.2 at 1920 and 1.5 at 2560. At 2560, explorer/proof/lab each measure 1920 px instead of the former 1510/1392/1392 px; at 390 all remain 358 px. Reviewed screenshots cover mobile angle typography, selected-solid profile, reciprocal plot, existence step and the enlarged 2K scene.
+
+All six interaction reports pass rotation, wheel zoom, solid/material/visibility selectors, Next and all five proof steps, laboratory flat-angle calculation, dual playback/reset, language/history and persistent Canvas checks. Idle draw delta is zero; offscreen and hidden-document construction pause and resume correctly. These remain simulated viewport and pointer checks, not physical-device tests. Initial JS is 522.46 kB / gzip 159.97 kB; the 917.15 kB scene remains deferred. Public deployment verification is pending.
