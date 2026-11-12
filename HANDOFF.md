@@ -4,7 +4,7 @@ Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](
 
 ## Active Work
 
-Active follow-up: MASTER_PLAN.md task S5. Wide-screen scale and EN/RU inline KaTeX are implemented and verified at six widths; all main shells measure 1920 px at 2560×1440. Next: commit and push, wait for Pages Actions, verify public EN/RU and current assets, then close S5. Prior approval-review usage limit cleared on retry; GitHub authentication and unchanged remote main confirmed.
+No active tasks. MASTER_PLAN.md S1–S5 complete: enlarged wide-screen layout and EN/RU inline KaTeX are published and verified. Source release 7e9473e passed Pages Actions; public resources match the CI artifact. Evidence and rollback guidance: docs/verification.md. Retain the existing design and phone sizing; any future iteration should start from user feedback.
 
 ## Decisions
 

@@ -72,6 +72,8 @@ User confirms scale is still too small on the full-page view, and requests formu
 - [x] S2 Implement fluid wide-screen scale and aligned section widths.
 - [x] S3 Mark and render inline mathematical notation in both languages.
 - [x] S4 Verify all formulas, responsive widths, Canvas stability and interactions.
-- [ ] S5 Publish, verify live EN/RU and record evidence.
+- [x] S5 Publish, verify live EN/RU and record evidence.
 
-S2–S4 evidence: Pages-base production build and `npm run verify` pass, including 140 inline formulas. Chrome checks at 390, 768, 1024, 1440, 1920 and 2560×1440 report no overflow, captured JS/KaTeX errors or raw math delimiters. At 2560, all three main shells measure 1920 px; at 390 they remain 358 px. Screenshot review confirms angle values render on one line after limiting UI span selectors to direct children. Rotation, zoom, materials, five steps, Next, laboratory, locale/history, persistent Canvas, zero idle draws and offscreen/hidden pause pass. See docs/verification.md. Publication remains pending.
+S2–S4 evidence: Pages-base production build and `npm run verify` pass, including 140 inline formulas. Chrome checks at 390, 768, 1024, 1440, 1920 and 2560×1440 report no overflow, captured JS/KaTeX errors or raw math delimiters. At 2560, all three main shells measure 1920 px; at 390 they remain 358 px. Screenshot review confirms angle values render on one line after limiting UI span selectors to direct children. Rotation, zoom, materials, five steps, Next, laboratory, locale/history, persistent Canvas, zero idle draws and offscreen/hidden pause pass. See docs/verification.md.
+
+S5: published source 7e9473e; build and deployment succeeded: https://github.com/michael-malis/platonic-solids-atlas/actions/runs/43309230383. Public EN/RU return 200 and render 59 inline math instances per tested page without KaTeX errors. Entry, scene, CSS and star resources return 200 and match SHA-256 of the actual CI deployment artifact (build hashes differ between local Windows and CI Linux). Main auto-deploy remains enabled. Follow-up complete.
