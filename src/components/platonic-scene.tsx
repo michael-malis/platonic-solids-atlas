@@ -17,6 +17,10 @@ type DisplayMode = "solid" | "glass" | "wire";
 // (the "vertices" legend dot in App.tsx uses the same 72/28 mix).
 const VERTEX_LIGHTEN = 0.28;
 
+// Starting pose for every solid: turned ~22° to the left and tipped ~8° down,
+// so the first frame already reads as 3D instead of a flat face-on view.
+const START_ROTATION = new THREE.Euler(THREE.MathUtils.degToRad(8), THREE.MathUtils.degToRad(-22), 0);
+
 // Measure unscaled layout dimensions: #root's wide-screen CSS zoom otherwise
 // feeds scaled bounds back into Canvas and repeatedly enlarges its render surface.
 const canvasResize = { offsetSize: true };
@@ -135,7 +139,9 @@ export function SolidCanvas({
     <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.15, 5.4], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
       <ResumeFrame active={active} />
       <Rig>
-        <Polyhedron key={data.key} data={data} mode={mode} showFaces={showFaces} showEdges={showEdges} showVertices={showVertices} />
+        <group rotation={START_ROTATION}>
+          <Polyhedron key={data.key} data={data} mode={mode} showFaces={showFaces} showEdges={showEdges} showVertices={showVertices} />
+        </group>
       </Rig>
       <OrbitControls makeDefault enableDamping dampingFactor={0.06} minDistance={3.2} maxDistance={8} enablePan={false} />
     </Canvas>
@@ -202,7 +208,9 @@ export function DualCanvas({ source, progress, active }: { source: PolyhedronDat
     <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.11, 6.1], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
       <ResumeFrame active={active} />
       <Rig>
-        <DualConstruction source={source} progress={progress} />
+        <group rotation={START_ROTATION}>
+          <DualConstruction source={source} progress={progress} />
+        </group>
       </Rig>
       <OrbitControls makeDefault enableDamping dampingFactor={0.06} minDistance={3.2} maxDistance={8} enablePan={false} />
     </Canvas>
