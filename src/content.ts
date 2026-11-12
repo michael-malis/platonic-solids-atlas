@@ -48,7 +48,7 @@ export type SiteCopy = {
     eyebrow: string; title1: string; title2: string; text: string; polygonSides: string; vertexEdges: string;
     swap: string; eulerCheck: string; candidate: string; impossible: string; matchText: string;
     candidateText: string; impossibleText: string; allPairs: string; mirror: string; polygon: string;
-    atVertex: string;
+    atVertex: string; selfDual: string; dualPair: string; pairHint: string;
   };
   footer: { statement: string; text: string; top: string };
 };
@@ -198,9 +198,12 @@ const en: SiteCopy = {
     candidateText: "The inequality holds, but integrality and an explicit construction must still be checked.",
     impossibleText: "The angle pattern leaves no positive spherical curvature.",
     allPairs: "All admissible pairs",
-    mirror: "Dual pairs are mirrored",
+    mirror: "Swap $p$ and $q$ to get the dual",
     polygon: "-gon",
     atVertex: "at each vertex",
+    selfDual: "self-dual",
+    dualPair: "dual pair",
+    pairHint: "Tap a card to load its pair into the laboratory above.",
   },
   footer: { statement: "Five solids. Two counts. One sphere.", text: "An interactive atlas of regular convex polyhedra.", top: "Back to top ↑" },
 };
@@ -350,9 +353,12 @@ const ru: SiteCopy = {
     candidateText: "Неравенство выполнено, но ещё нужны целочисленность и явная конструкция.",
     impossibleText: "Угловая схема не оставляет положительной сферической кривизны.",
     allPairs: "Все допустимые пары",
-    mirror: "Двойственные пары расположены зеркально",
+    mirror: "Поменяйте $p$ и $q$ — получите двойственное",
     polygon: "-угольник",
     atVertex: "при вершине",
+    selfDual: "самодвойственный",
+    dualPair: "двойственная пара",
+    pairHint: "Нажмите на карточку, чтобы перенести пару в лабораторию выше.",
   },
   footer: { statement: "Пять тел. Два подсчёта. Одна сфера.", text: "Интерактивный атлас правильных выпуклых многогранников.", top: "Наверх ↑" },
 };

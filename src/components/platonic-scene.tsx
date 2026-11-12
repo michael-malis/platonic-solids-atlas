@@ -13,6 +13,10 @@ import type { SceneProps } from "./deferred-scene";
 
 type DisplayMode = "solid" | "glass" | "wire";
 
+// Share of white mixed into a solid's colour for its vertex spheres
+// (the "vertices" legend dot in App.tsx uses the same 72/28 mix).
+const VERTEX_LIGHTEN = 0.28;
+
 // Measure unscaled layout dimensions: #root's wide-screen CSS zoom otherwise
 // feeds scaled bounds back into Canvas and repeatedly enlarges its render surface.
 const canvasResize = { offsetSize: true };
@@ -42,8 +46,21 @@ const Polyhedron = memo(function Polyhedron({
 }: PolyhedronProps) {
   const faceGeometry = useMemo(() => geometryForFaces(data), [data]);
   const edgeGeometry = useMemo(() => geometryForEdges(data), [data]);
-  const vertexGeometry = useMemo(() => new THREE.SphereGeometry(1, 12, 12), []);
-  const vertexMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: "#fff8df", transparent: true, opacity: vertexOpacity, emissive: color, emissiveIntensity: 0.22 }), [color, vertexOpacity]);
+  const vertexGeometry = useMemo(() => new THREE.SphereGeometry(1, 20, 16), []);
+  // Vertices: the solid's own hue as a light metallic bead with a soft, diffused
+  // highlight, plus a little self-glow so it stays bright without an env map.
+  const vertexMaterial = useMemo(() => {
+    const tint = new THREE.Color(color).lerp(new THREE.Color("#ffffff"), VERTEX_LIGHTEN);
+    return new THREE.MeshStandardMaterial({
+      color: tint,
+      metalness: 0.55,
+      roughness: 0.42,
+      emissive: color,
+      emissiveIntensity: 0.5,
+      transparent: true,
+      opacity: vertexOpacity,
+    });
+  }, [color, vertexOpacity]);
   useEffect(() => () => { faceGeometry.dispose(); edgeGeometry.dispose(); }, [faceGeometry, edgeGeometry]);
   useEffect(() => () => vertexGeometry.dispose(), [vertexGeometry]);
   useEffect(() => () => vertexMaterial.dispose(), [vertexMaterial]);
@@ -55,7 +72,7 @@ const Polyhedron = memo(function Polyhedron({
         <mesh geometry={faceGeometry}>
           <meshPhysicalMaterial
             color={color}
-            roughness={0.28}
+            roughness={0.4}
             metalness={0.08}
             transmission={mode === "glass" ? 0.15 : 0}
             thickness={0.35}
@@ -69,7 +86,7 @@ const Polyhedron = memo(function Polyhedron({
       )}
       {showEdges && edgeOpacity > 0 && (
         <lineSegments geometry={edgeGeometry}>
-          <lineBasicMaterial color="#eafdfb" transparent opacity={edgeOpacity} />
+          <lineBasicMaterial color="#d3ece7" transparent opacity={edgeOpacity * 0.85} />
         </lineSegments>
       )}
       {showVertices &&
@@ -89,10 +106,10 @@ function ResumeFrame({ active }: { active: boolean }) {
 function Rig({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ambientLight intensity={0.58} />
-      <directionalLight position={[4, 5, 6]} intensity={2.2} color="#d9fff8" />
-      <pointLight position={[-4, -1, 2]} intensity={18} color="#6559ff" distance={10} />
-      <pointLight position={[3, -2, -3]} intensity={10} color="#ffbd66" distance={9} />
+      <ambientLight intensity={0.72} />
+      <directionalLight position={[4, 5, 6]} intensity={2.6} color="#d9fff8" />
+      <pointLight position={[-4, -1, 2]} intensity={3.5} color="#8fdcd2" distance={10} />
+      <pointLight position={[3, -2, -3]} intensity={6} color="#ffbd66" distance={9} />
       {children}
       <ContactShadows frames={1} position={[0, -2.05, 0]} opacity={0.22} scale={8} blur={2.8} far={4} color="#020817" />
     </>
@@ -182,7 +199,7 @@ function DualConstruction({ source, progress }: { source: PolyhedronData; progre
 
 export function DualCanvas({ source, progress, active }: { source: PolyhedronData; progress: number; active: boolean }) {
   return (
-    <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.1, 5.5], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+    <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.11, 6.1], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
       <ResumeFrame active={active} />
       <Rig>
         <DualConstruction source={source} progress={progress} />

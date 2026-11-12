@@ -1,11 +1,12 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useState, type CSSProperties } from "react";
 import { BlockMath, InlineMath, MathText } from "./math";
 import {
   ArrowDown, ArrowLeftRight, Check, ChevronRight, CircleDot, Eye, EyeOff,
-  Pause, Play, Rotate3D, RotateCcw, Shapes, Sparkles, X, ZoomIn,
+  Pause, Play, Rotate3D, RotateCcw, Sparkles, X, ZoomIn,
 } from "lucide-react";
 import { DeferredScene } from "./components/deferred-scene";
 import { scrollBehavior, useDocumentVisible, useSceneVisibility } from "./lib/visibility";
+import { CubeMark } from "./components/cube-mark";
 import { ProofVisual } from "./components/proof-visual";
 import { COPY, localeFromPath, type Locale } from "./content";
 import { angleData, counts, DUAL_KEY, PAIR_TO_SOLID, SOLID_ORDER, SOLID_INFO, valuesForPair, type SolidKey } from "./lib/solid-data";
@@ -119,13 +120,19 @@ export default function Home() {
   const profile = copy.atlas.profiles[solidKey];
   const angles = angleData(p, q);
   const formatAngle = (value: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits: 1 }).format(value);
-  const pairCards = useMemo(() => SOLID_ORDER.map((key) => ({ data: SOLID_INFO[key], counts: counts(SOLID_INFO[key]) })), []);
+  // Group the five solids by duality: tetrahedron alone (self-dual), then cube ⇄ octahedron, dodecahedron ⇄ icosahedron.
+  const pairGroups = useMemo(
+    () => SOLID_ORDER
+      .filter((key) => SOLID_ORDER.indexOf(DUAL_KEY[key]) >= SOLID_ORDER.indexOf(key))
+      .map((key) => (DUAL_KEY[key] === key ? [key] : [key, DUAL_KEY[key]])),
+    [],
+  );
 
   return (
     <>
       <a className="skip-link" href="#main-content">{copy.skip}</a>
       <nav className="topbar" aria-label={copy.nav.aria}>
-        <a className="brand" href="#top"><span className="brand-mark"><Shapes aria-hidden="true" size={19} /></span><span>{copy.brand}</span></a>
+        <a className="brand" href="#top"><span className="brand-mark"><CubeMark size={19} /></span><span>{copy.brand}</span></a>
         <div className="nav-links"><a href="#explore">{copy.nav.explore}</a><a href="#duality">{copy.nav.duality}</a><a href="#proof">{copy.nav.proof}</a><a href="#lab">{copy.nav.lab}</a></div>
         <div className="nav-actions">
           <div className="language-switch" role="group" aria-label={copy.language.label}>
@@ -160,7 +167,7 @@ export default function Home() {
             <div className="canvas-panel">
               <div className="canvas-wrap dark-stars" ref={explorerScene.ref}><DeferredScene kind="solid" solidKey={solidKey} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} active={explorerScene.visible && documentVisible} ready={explorerScene.ready} copy={copy.atlas.scene} /><div className="canvas-hint"><Rotate3D size={16} /> {copy.explore.hintDrag} <span>·</span><ZoomIn size={16} /> {copy.explore.hintZoom}</div><div className="solid-title"><span><InlineMath math={`\\{${solid.p},${solid.q}\\}`} /></span><h3>{copy.solids[solidKey].name}</h3></div></div>
               <aside className="control-panel">
-                <div><span className="panel-label">{copy.explore.combinatorics}</span><div className="metrics"><Metric label={copy.explore.vertices} value={c.V} color="var(--viz-vertex)" /><Metric label={copy.explore.edges} value={c.E} color="var(--viz-edge)" /><Metric label={copy.explore.faces} value={c.F} color={solid.color} /></div><div className="euler-check"><div><CircleDot size={17} /> {copy.explore.euler}</div><strong><InlineMath math={`${c.V}-${c.E}+${c.F}=\\color{#d97706}{2}`} /></strong></div></div>
+                <div><span className="panel-label">{copy.explore.combinatorics}</span><div className="metrics"><Metric label={copy.explore.vertices} value={c.V} color={`color-mix(in srgb, ${solid.color} 72%, white)`} /><Metric label={copy.explore.edges} value={c.E} color="var(--viz-edge)" /><Metric label={copy.explore.faces} value={c.F} color={solid.color} /></div><div className="euler-check"><div><CircleDot size={17} /> {copy.explore.euler}</div><strong><InlineMath math={`${c.V}-${c.E}+${c.F}=\\color{#d97706}{2}`} /></strong></div></div>
                 <div><span className="panel-label">{copy.explore.show}</span><div className="toggle-row"><Toggle active={parts.vertices} onClick={() => setParts((value) => ({ ...value, vertices: !value.vertices }))}>{copy.explore.vertices}</Toggle><Toggle active={parts.edges} onClick={() => setParts((value) => ({ ...value, edges: !value.edges }))}>{copy.explore.edges}</Toggle><Toggle active={parts.faces} onClick={() => setParts((value) => ({ ...value, faces: !value.faces }))}>{copy.explore.faces}</Toggle></div></div>
                 <div><span className="panel-label">{copy.explore.material}</span><div className="mode-row">{(["solid", "glass", "wire"] as DisplayMode[]).map((item) => <button key={item} type="button" aria-pressed={mode === item} onClick={() => setMode(item)} className={mode === item ? "active" : ""}>{copy.explore.modes[item]}</button>)}</div></div>
                 <p className="solid-note"><MathText text={copy.solids[solidKey].note} /></p>
@@ -176,7 +183,7 @@ export default function Home() {
           <header className="section-heading inverse"><div><span className="section-index">02</span><div className="eyebrow">{copy.duality.eyebrow}</div></div><h2>{copy.duality.title1} <em>{copy.duality.title2}</em></h2><p><MathText text={copy.duality.text} /></p></header>
           <div className="dual-layout">
             <div className="dual-stage" ref={dualScene.ref}>
-              <div className="dual-tabs">{copy.duality.pairs.map((pair) => <button key={pair.source} type="button" aria-pressed={dualSource === pair.source} className={dualSource === pair.source ? "active" : ""} onClick={() => { setDualSource(pair.source); setProgress(0); setPlaying(false); }}>{pair.label}<ArrowLeftRight size={14} />{pair.target}</button>)}</div>
+              <div className="dual-tabs">{copy.duality.pairs.map((pair) => <button key={pair.source} type="button" aria-pressed={dualSource === pair.source} className={dualSource === pair.source ? "active" : ""} onClick={() => { setDualSource(pair.source); setProgress(0); setPlaying(true); }}>{pair.label}<ArrowLeftRight size={14} />{pair.target}</button>)}</div>
               <div className="dual-canvas"><DeferredScene kind="dual" solidKey={dualSource} progress={progress} active={dualActive} ready={dualScene.ready} copy={copy.atlas.scene} /></div>
               <div className="timeline"><button type="button" aria-label={playing ? copy.duality.pause : copy.duality.play} onClick={() => { if (progress >= 1) setProgress(0); setPlaying((value) => !value); }}>{playing ? <Pause size={18} /> : <Play size={18} />}</button><input aria-label={copy.duality.progress} type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => { setPlaying(false); setProgress(Number(event.target.value)); }} /><button type="button" aria-label={copy.duality.reset} onClick={() => { setPlaying(false); setProgress(0); }}><RotateCcw size={17} /></button><span>{Math.round(progress * 100)}%</span></div>
             </div>
@@ -207,10 +214,41 @@ export default function Home() {
             <p><MathText text={angles.defect > 0 ? copy.atlas.angles.positive : angles.defect === 0 ? copy.atlas.angles.zero : copy.atlas.angles.negative} /></p>
             <details><summary>{copy.atlas.angleDetails}</summary><p><MathText text={copy.atlas.angleExplanation} /></p><BlockMath math={String.raw`\alpha=\frac{(p-2)\pi}{p},\qquad\delta=2\pi-q\alpha`} /><BlockMath math={String.raw`\delta=2\pi q\left(\frac1p+\frac1q-\frac12\right)`} /></details>
           </div>
-          <div className="pair-table"><div className="pair-head"><span>{copy.lab.allPairs}</span><span>{copy.lab.mirror}</span></div><div className="pair-cards">{pairCards.map(({ data, counts: itemCounts }) => <button key={data.key} type="button" aria-pressed={match === data.key} className={match === data.key ? "active" : ""} onClick={() => { setP(data.p); setQ(data.q); }}><div className="pair-symbol"><InlineMath math={`\\{${data.p},${data.q}\\}`} /></div><strong>{copy.solids[data.key].name}</strong><span>{data.p}{copy.lab.polygon} · {data.q} {copy.lab.atVertex}</span><div><small>V {itemCounts.V}</small><small>E {itemCounts.E}</small><small>F {itemCounts.F}</small></div></button>)}</div></div>
+          <div className="pair-table">
+            <div className="pair-head"><span>{copy.lab.allPairs}</span><span><MathText text={copy.lab.mirror} /></span></div>
+            <div className="pair-groups">
+              {pairGroups.map((group) => (
+                <div key={group[0]} className={`pair-group${group.length === 1 ? " is-self" : ""}`}>
+                  <span className="pair-group-label">{group.length === 1 ? copy.lab.selfDual : copy.lab.dualPair}</span>
+                  <div className="pair-cards">
+                    {group.map((key, index) => {
+                      const data = SOLID_INFO[key];
+                      const itemCounts = counts(data);
+                      return (
+                        <Fragment key={key}>
+                          {index === 1 && <span className="pair-swap" aria-hidden="true"><ArrowLeftRight size={13} /></span>}
+                          <button type="button" style={{ "--solid": data.color } as CSSProperties} aria-pressed={match === data.key} className={match === data.key ? "active" : ""} onClick={() => { setP(data.p); setQ(data.q); }}>
+                            <div className="pair-symbol"><InlineMath math={`\\{${data.p},${data.q}\\}`} /></div>
+                            <strong>{copy.solids[data.key].name}</strong>
+                            <span>{data.p}{copy.lab.polygon} · {data.q} {copy.lab.atVertex}</span>
+                            <dl className="pair-counts">
+                              <div><dt><i style={{ background: `color-mix(in srgb, ${data.color} 72%, white)` }} />{copy.explore.vertices}</dt><dd>{itemCounts.V}</dd></div>
+                              <div><dt><i style={{ background: "var(--viz-edge)" }} />{copy.explore.edges}</dt><dd>{itemCounts.E}</dd></div>
+                              <div><dt><i style={{ background: data.color }} />{copy.explore.faces}</dt><dd>{itemCounts.F}</dd></div>
+                            </dl>
+                          </button>
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="pair-hint">{copy.lab.pairHint}</p>
+          </div>
           <p className="atlas-conclusion"><MathText text={copy.atlas.angles.conclusion} /></p>
         </section>
-        <footer><div><span className="brand-mark"><Shapes aria-hidden="true" size={16} /></span><strong>{copy.footer.statement}</strong></div><p>{copy.footer.text}</p><a href="#top">{copy.footer.top}</a></footer>
+        <footer><div><span className="brand-mark"><CubeMark size={16} /></span><strong>{copy.footer.statement}</strong></div><p>{copy.footer.text}</p><a href="#top">{copy.footer.top}</a></footer>
       </main>
     </>
   );
