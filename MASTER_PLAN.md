@@ -42,7 +42,7 @@ Separate reversible commits for content, stars and performance; do not move exis
 
 ## Evidence / current action
 
-Baseline HEAD: ba35e45. No application changes at start; prior untracked design spec retained as historical context. Current action: baseline measurement and bilingual draft, then independent review. Checkboxes close only with evidence below or linked reports.
+Baseline HEAD: ba35e45. No application changes at start; prior untracked design spec retained as historical context. Preparation complete; see evidence and final outcome below. Checkboxes close only with evidence below or linked reports.
 
 ### Content evidence
 
@@ -54,4 +54,12 @@ Baseline: production JS 1,420.19 kB / gzip 402.44 kB. Headless CLI works without
 
 See docs/verification.md. Geometry/KaTeX command: npm run verify (pass). Production build passes. Chrome responsive/interactions reports and screenshots are stored in the workspace atlas-qa folder outside the repository. All six widths pass no-overflow checks; EN/RU, synthetic drag/zoom, navigation, idle/offscreen/hidden behavior verified. Initial gzip JS falls from 402.44 to about 159.6 kB. C4 fixes CSS-zoom/Canvas feedback and pauses animation; no claim of universal hardware performance.
 
-Current action: validate Pages-base build, publish separate commits and verify GitHub Actions plus live EN/RU. D4 remains open until public checks pass.
+Pages-base build and publication completed; see final outcome below.
+
+### Final outcome
+
+All tasks complete. Published EN / and RU /ru/ return HTTP 200; the current entry, deferred scene, CSS and star SVG return 200. Real public pages render the new content and KaTeX; Chrome opens both published routes. Source release 6d3eb08 passed Actions: https://github.com/michael-malis/platonic-solids-atlas/actions/runs/43288288908.
+
+Final Pages-base browser tests (390 px RU and 2560×1440 EN): no captured errors, no KaTeX errors, zero idle draws, responsive layout without overflow; rotation/zoom work, Canvas survives locale switches, offscreen/hidden progress pauses, direct section fragments start at the intended nonzero scroll position. Synthetic pointer tests account for the lack of native pointer capture in dispatched events. Additional 500 px hero check passes.
+
+Live: https://michael-malis.github.io/platonic-solids-atlas/ and https://michael-malis.github.io/platonic-solids-atlas/ru/. Auto-deploy remains enabled for main. Rollback: revert the relevant content, starfield, performance or responsive-fix commit and let the workflow redeploy; retain the historical rollback tag. Browser checks simulate mobile viewports, not physical devices. Large 3D bundle remains deferred rather than eliminated. No active implementation tasks remain.

@@ -4,7 +4,7 @@ Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](
 
 ## Active Work
 
-- [ ] Execute approved content/performance refinement. Content and two-pass independent review complete. Local build, mathematics and browser checks pass; see docs/verification.md. Next: Pages-base build, publish and verify Actions/live EN/RU. Acceptance: tracker D1–D5 verified, live EN/RU checked.
+No active tasks. All checklist items in MASTER_PLAN.md are verified. Published source 6d3eb08 passed Actions and live EN/RU checks. Review evidence and rollback in docs/verification.md.
 
 ## Decisions
 
@@ -18,7 +18,7 @@ Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](
 
 ## Deviations from the plan
 
-None yet.
+During responsive verification, fixed existing wide-screen Canvas resize feedback, long Russian mobile hero clipping, and initial section-fragment timing. Targeted follow-up commits preserve desktop design.
 
 ## Intentionally not done
 

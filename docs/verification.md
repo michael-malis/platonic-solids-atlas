@@ -48,3 +48,7 @@ Use `git log` for the three independent content, starfield and performance chang
 ### Final responsive and deep-link checks
 
 Additional 390/500 px checks found a long Russian hero word clipping despite no document-level overflow. Scoped mobile Russian heading sizing and normal-flow hero illustration fix clipping and button overlap; heading scrollWidth now equals clientWidth at both sizes. Direct section fragments are scrolled during layout after React creates their targets. Pages-base local EN/RU routes and interactions pass.
+
+### Publication result
+
+Published source 6d3eb08: successful workflow https://github.com/michael-malis/platonic-solids-atlas/actions/runs/43288288908. EN and RU HTML, current JS, deferred scene JS, CSS and star SVG return HTTP 200. Public Chrome DOM includes new profiles, angle explanations and rendered KaTeX; 3D mounts near the scene. Local Pages-base direct-fragment tests start at scrollY 2809 (EN duality, 2560×1440) and 7982 (RU laboratory, 390 px), with no captured errors. Public headless screenshots are used to check rendering, while the same-origin harness checks precise scroll behavior and interactions.
