@@ -49,3 +49,9 @@ Baseline HEAD: ba35e45. No application changes at start; prior untracked design 
 B1–B4: docs/content-draft.md and docs/content-review.md; independent editorial_review completed, all findings adjudicated. B5/C1: bilingual integration and diagram corrections compile with npm run build. Visual acceptance remains open.
 
 Baseline: production JS 1,420.19 kB / gzip 402.44 kB. Headless CLI works without remote debugging; browser connectors unavailable. Baseline wide-screen screenshot/DOM in workspace atlas-qa/baseline (outside repository). At viewport ~2K, Canvas height grew to 40,924 px: CSS zoom plus measured Canvas sizing feedback identified; must fix and remeasure. Original idle rendering was already demand-driven.
+
+### Integration and validation evidence
+
+See docs/verification.md. Geometry/KaTeX command: npm run verify (pass). Production build passes. Chrome responsive/interactions reports and screenshots are stored in the workspace atlas-qa folder outside the repository. All six widths pass no-overflow checks; EN/RU, synthetic drag/zoom, navigation, idle/offscreen/hidden behavior verified. Initial gzip JS falls from 402.44 to about 159.6 kB. C4 fixes CSS-zoom/Canvas feedback and pauses animation; no claim of universal hardware performance.
+
+Current action: validate Pages-base build, publish separate commits and verify GitHub Actions plus live EN/RU. D4 remains open until public checks pass.

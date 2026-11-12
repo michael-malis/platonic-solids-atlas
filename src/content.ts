@@ -1,4 +1,4 @@
-import type { SolidKey } from "./lib/platonic";
+import type { SolidKey } from "./lib/solid-data";
 import { ATLAS_COPY, type AtlasCopy } from "./atlas-copy";
 
 export type Locale = "en" | "ru";
@@ -135,7 +135,7 @@ const en: SiteCopy = {
         kicker: "Step 1 · the graph language",
         short: "Name the data",
         title: "Turn geometry into countable data",
-        text: "Trace the edges and vertices of a regular convex polyhedron as a graph on a sphere. Every face is the same regular p-gon, exactly q edges meet at each vertex, and V, E, F count vertices, edges, and faces. A genuine polygon and a spatial corner each need at least three sides.",
+        text: "The vertices and edges form a graph: imagine projecting it onto a surrounding sphere without crossings. Each face is a regular p-gon, q edges meet at each vertex, and V, E, F count vertices, edges, and faces. A polygon needs at least three sides; a convex corner needs at least three faces.",
         formula: String.raw`p,q\ge 3`,
         takeaway: "The classification problem is now encoded by the integer pair {p,q}.",
         visualCaption: "cube example: p = 4, q = 3 · schematic view",
@@ -156,9 +156,9 @@ const en: SiteCopy = {
         short: "Extract curvature",
         title: "Euler's formula leaves a positive remainder",
         text: "Substitute V=2E/q and F=2E/p into V−E+F=2. Dividing by 2E isolates 1/E, which is positive because a polyhedron has finitely many edges. This positive remainder is the algebraic signal that the graph closes on a sphere rather than extending as a flat tiling.",
-        formula: String.raw`\frac{2E}{q}-E+\frac{2E}{p}=2\ \Longrightarrow\ \frac1p+\frac1q-\frac12=\frac1E>0`,
+        formula: String.raw`\begin{gathered}\frac{2E}{q}-E+\frac{2E}{p}=2\\[6pt]\frac1p+\frac1q-\frac12=\frac1E>0\end{gathered}`,
         takeaway: "Therefore 1/p + 1/q > 1/2. The equality pairs {3,6}, {4,4} and {6,3} instead give flat tilings.",
-        visualCaption: "angle defect: positive above the line, zero on it",
+        visualCaption: "δ is the angle defect: positive above the line, zero on it",
         visualDescription: "On axes x=1/p and y=1/q, both from zero to one third, the straight line x+y=1/2 separates positive and negative angle defect. Five admissible pairs lie above it; three flat examples lie on it.",
       },
       {
@@ -287,7 +287,7 @@ const ru: SiteCopy = {
         kicker: "Шаг 1 · язык графов",
         short: "Зададим данные",
         title: "Переведём геометрию в подсчёт",
-        text: "Рёбра и вершины правильного выпуклого многогранника образуют граф на сфере. Каждая грань — один и тот же правильный p-угольник, а в каждой вершине сходятся ровно q рёбер. Буквы V, E и F обозначают числа вершин, рёбер и граней. Для настоящей грани и пространственного угла нужно не меньше трёх сторон.",
+        text: "Вершины и рёбра образуют граф: мысленно спроецируем его на окружающую сферу без пересечений. Грани — правильные p-угольники, в вершине сходятся q рёбер, а V, E, F — числа вершин, рёбер и граней. Многоугольнику нужны хотя бы три стороны, а выпуклой вершине — хотя бы три грани.",
         formula: String.raw`p,q\ge 3`,
         takeaway: "Задача классификации теперь закодирована целочисленной парой {p,q}.",
         visualCaption: "пример куба: p = 4, q = 3 · схема",
@@ -308,9 +308,9 @@ const ru: SiteCopy = {
         short: "Выделим кривизну",
         title: "Формула Эйлера оставляет положительную добавку",
         text: "Подставим V=2E/q и F=2E/p в равенство V−E+F=2. После деления на 2E остаётся величина 1/E, которая положительна, потому что у многогранника конечное ненулевое число рёбер. Именно эта добавка отличает замкнутый граф на сфере от бесконечной плоской мозаики.",
-        formula: String.raw`\frac{2E}{q}-E+\frac{2E}{p}=2\ \Longrightarrow\ \frac1p+\frac1q-\frac12=\frac1E>0`,
+        formula: String.raw`\begin{gathered}\frac{2E}{q}-E+\frac{2E}{p}=2\\[6pt]\frac1p+\frac1q-\frac12=\frac1E>0\end{gathered}`,
         takeaway: "Значит, 1/p + 1/q > 1/2. Пары с равенством {3,6}, {4,4} и {6,3} дают плоские мозаики.",
-        visualCaption: "угловой дефект: над прямой положительный, на ней нулевой",
+        visualCaption: "δ — угловой дефект: над прямой положительный, на ней нулевой",
         visualDescription: "Оси x=1/p и y=1/q идут от нуля до одной трети. Прямая x+y=1/2 разделяет положительный и отрицательный угловой дефект. Пять допустимых пар лежат выше неё, три плоских примера — на ней.",
       },
       {

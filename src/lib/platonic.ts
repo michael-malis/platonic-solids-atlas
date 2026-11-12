@@ -1,19 +1,11 @@
 import * as THREE from "three";
 
-export type SolidKey = "tetra" | "cube" | "octa" | "dodeca" | "icosa";
+import { SOLID_INFO, DUAL_KEY, type SolidInfo, type SolidKey } from "./solid-data";
 
-export type PolyhedronData = {
-  key: SolidKey;
-  name: string;
-  symbol: string;
-  p: number;
-  q: number;
+export type PolyhedronData = SolidInfo & {
   vertices: THREE.Vector3[];
   faces: number[][];
   edges: [number, number][];
-  color: string;
-  accent: string;
-  note: string;
 };
 
 const PHI = (1 + Math.sqrt(5)) / 2;
@@ -89,20 +81,10 @@ function computeEdges(faces: number[][]) {
   return [...map.values()];
 }
 
-function makeSolid(
-  key: SolidKey,
-  name: string,
-  symbol: string,
-  p: number,
-  q: number,
-  rawVertices: number[][],
-  color: string,
-  accent: string,
-  note: string,
-): PolyhedronData {
+function makeSolid(key: SolidKey, rawVertices: number[][]): PolyhedronData {
   const vertices = normalizeVertices(rawVertices);
   const faces = computeFaces(vertices);
-  return { key, name, symbol, p, q, vertices, faces, edges: computeEdges(faces), color, accent, note };
+  return { ...SOLID_INFO[key], vertices, faces, edges: computeEdges(faces) };
 }
 
 const tetraVertices = [
@@ -137,14 +119,12 @@ for (const a of [-1, 1]) {
 }
 
 export const SOLIDS: Record<SolidKey, PolyhedronData> = {
-  tetra: makeSolid("tetra", "Тетраэдр", "{ 3, 3 }", 3, 3, tetraVertices, "#48d7c5", "#d9fff8", "Четыре равносторонних треугольника. Самодвойственен."),
-  cube: makeSolid("cube", "Куб", "{ 4, 3 }", 4, 3, cubeVertices, "#64a8ff", "#dcecff", "Шесть квадратов; в каждой вершине встречаются три грани."),
-  octa: makeSolid("octa", "Октаэдр", "{ 3, 4 }", 3, 4, octaVertices, "#a78bfa", "#eee8ff", "Восемь треугольников; двойственен кубу."),
-  dodeca: makeSolid("dodeca", "Додекаэдр", "{ 5, 3 }", 5, 3, dodecaVertices, "#f2b84b", "#fff0c9", "Двенадцать правильных пятиугольников."),
-  icosa: makeSolid("icosa", "Икосаэдр", "{ 3, 5 }", 3, 5, icosaVertices, "#ff7a90", "#ffe0e6", "Двадцать треугольников; двойственен додекаэдру."),
+  tetra: makeSolid("tetra", tetraVertices),
+  cube: makeSolid("cube", cubeVertices),
+  octa: makeSolid("octa", octaVertices),
+  dodeca: makeSolid("dodeca", dodecaVertices),
+  icosa: makeSolid("icosa", icosaVertices),
 };
-
-export const SOLID_ORDER: SolidKey[] = ["tetra", "cube", "octa", "dodeca", "icosa"];
 
 export function counts(data: PolyhedronData) {
   return { V: data.vertices.length, E: data.edges.length, F: data.faces.length };
@@ -157,13 +137,10 @@ export function dualOf(data: PolyhedronData): PolyhedronData {
       .multiplyScalar(1 / face.length),
   );
   const faces = computeFaces(vertices);
-  const dualKey: Record<SolidKey, SolidKey> = {
-    tetra: "tetra", cube: "octa", octa: "cube", dodeca: "icosa", icosa: "dodeca",
-  };
-  const canonical = SOLIDS[dualKey[data.key]];
+  const canonical = SOLIDS[DUAL_KEY[data.key]];
   return {
     ...canonical,
-    key: dualKey[data.key],
+    key: DUAL_KEY[data.key],
     vertices,
     faces,
     edges: computeEdges(faces),
@@ -196,27 +173,4 @@ export function geometryForEdges(data: PolyhedronData) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
   return geometry;
-}
-
-export const PAIR_TO_SOLID: Record<string, SolidKey> = {
-  "3-3": "tetra",
-  "4-3": "cube",
-  "3-4": "octa",
-  "5-3": "dodeca",
-  "3-5": "icosa",
-};
-
-export function valuesForPair(p: number, q: number) {
-  const denominator = 2 * p + 2 * q - p * q;
-  if (denominator <= 0) return null;
-  const E = (2 * p * q) / denominator;
-  return { V: (2 * E) / q, E, F: (2 * E) / p };
-}
-
-export function angleData(p: number, q: number) {
-  const faceAngle = 180 * (p - 2) / p;
-  const total = q * faceAngle;
-  const rawDefect = 360 - total;
-  const defect = Math.abs(rawDefect) < 1e-9 ? 0 : rawDefect;
-  return { faceAngle, total, defect };
 }

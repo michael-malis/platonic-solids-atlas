@@ -1,6 +1,6 @@
 import { ArrowLeftRight, Check } from "lucide-react";
 import type { Locale, ProofStepCopy, SiteCopy } from "../content";
-import { counts, SOLID_ORDER, SOLIDS } from "../lib/platonic";
+import { counts, SOLID_ORDER, SOLID_INFO } from "../lib/solid-data";
 
 type ProofVisualProps = {
   step: number;
@@ -131,7 +131,7 @@ function ExistenceDiagram({ copy }: { copy: SiteCopy }) {
   return (
     <div className="existence-grid" aria-hidden="true">
       {SOLID_ORDER.map((key) => {
-        const solid = SOLIDS[key];
+        const solid = SOLID_INFO[key];
         const c = counts(solid);
         return (
           <div className={`existence-card solid-${key}`} key={key}>

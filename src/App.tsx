@@ -4,16 +4,13 @@ import {
   ArrowDown, ArrowLeftRight, Check, ChevronRight, CircleDot, Eye, EyeOff,
   Pause, Play, Rotate3D, RotateCcw, Shapes, Sparkles, X, ZoomIn,
 } from "lucide-react";
-import { DualCanvas, SolidCanvas } from "./components/platonic-scene";
+import { DeferredScene } from "./components/deferred-scene";
+import { scrollBehavior, useDocumentVisible, useSceneVisibility } from "./lib/visibility";
 import { ProofVisual } from "./components/proof-visual";
 import { COPY, localeFromPath, type Locale } from "./content";
-import { angleData, counts, PAIR_TO_SOLID, SOLID_ORDER, SOLIDS, valuesForPair, type SolidKey } from "./lib/platonic";
+import { angleData, counts, DUAL_KEY, PAIR_TO_SOLID, SOLID_ORDER, SOLID_INFO, valuesForPair, type SolidKey } from "./lib/solid-data";
 
 type DisplayMode = "solid" | "glass" | "wire";
-
-const DUAL_KEY: Record<SolidKey, SolidKey> = {
-  tetra: "tetra", cube: "octa", octa: "cube", dodeca: "icosa", icosa: "dodeca",
-};
 
 function Toggle({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
@@ -66,12 +63,16 @@ export default function Home() {
   const [proofStep, setProofStep] = useState(0);
   const [p, setP] = useState(3);
   const [q, setQ] = useState(5);
+  const explorerScene = useSceneVisibility();
+  const dualScene = useSceneVisibility();
+  const documentVisible = useDocumentVisible();
+  const dualActive = dualScene.visible && documentVisible;
 
   const copy = COPY[locale];
-  const solid = SOLIDS[solidKey];
+  const solid = SOLID_INFO[solidKey];
   const c = counts(solid);
-  const source = SOLIDS[dualSource];
-  const target = SOLIDS[DUAL_KEY[dualSource]];
+  const source = SOLID_INFO[dualSource];
+  const target = SOLID_INFO[DUAL_KEY[dualSource]];
   const sourceCounts = counts(source);
   const targetCounts = counts(target);
 
@@ -82,7 +83,7 @@ export default function Home() {
     return () => window.removeEventListener("popstate", syncLocale);
   }, []);
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || !dualActive) return;
     let frame = 0;
     let previous = performance.now();
     const tick = (now: number) => {
@@ -97,7 +98,7 @@ export default function Home() {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [playing]);
+  }, [playing, dualActive]);
 
   const switchLocale = (next: Locale) => {
     if (next === locale) return;
@@ -112,7 +113,7 @@ export default function Home() {
   const profile = copy.atlas.profiles[solidKey];
   const angles = angleData(p, q);
   const formatAngle = (value: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits: 1 }).format(value);
-  const pairCards = useMemo(() => SOLID_ORDER.map((key) => ({ data: SOLIDS[key], counts: counts(SOLIDS[key]) })), []);
+  const pairCards = useMemo(() => SOLID_ORDER.map((key) => ({ data: SOLID_INFO[key], counts: counts(SOLID_INFO[key]) })), []);
 
   return (
     <>
@@ -148,10 +149,10 @@ export default function Home() {
           <div className="explorer-shell">
             <div className="atlas-intro"><h3>{copy.atlas.intro.title}</h3><p>{copy.atlas.intro.text}</p><p>{copy.atlas.intro.notation}</p></div>
             <div className="solid-tabs" role="tablist" aria-label={copy.explore.choose}>{SOLID_ORDER.map((key) => (
-              <button key={key} type="button" role="tab" aria-selected={solidKey === key} className={solidKey === key ? "active" : ""} onClick={(event) => { setSolidKey(key); event.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); }}><span>{SOLIDS[key].symbol}</span>{copy.solids[key].short}</button>
+              <button key={key} type="button" role="tab" aria-selected={solidKey === key} className={solidKey === key ? "active" : ""} onClick={(event) => { setSolidKey(key); event.currentTarget.scrollIntoView({ behavior: scrollBehavior(), block: "nearest", inline: "center" }); }}><span>{SOLID_INFO[key].symbol}</span>{copy.solids[key].short}</button>
             ))}</div>
             <div className="canvas-panel">
-              <div className="canvas-wrap dark-stars"><SolidCanvas data={solid} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} /><div className="canvas-hint"><Rotate3D size={16} /> {copy.explore.hintDrag} <span>·</span><ZoomIn size={16} /> {copy.explore.hintZoom}</div><div className="solid-title"><span>{solid.symbol}</span><h3>{copy.solids[solidKey].name}</h3></div></div>
+              <div className="canvas-wrap dark-stars" ref={explorerScene.ref}><DeferredScene kind="solid" solidKey={solidKey} mode={mode} showFaces={parts.faces} showEdges={parts.edges} showVertices={parts.vertices} active={explorerScene.visible && documentVisible} ready={explorerScene.ready} copy={copy.atlas.scene} /><div className="canvas-hint"><Rotate3D size={16} /> {copy.explore.hintDrag} <span>·</span><ZoomIn size={16} /> {copy.explore.hintZoom}</div><div className="solid-title"><span>{solid.symbol}</span><h3>{copy.solids[solidKey].name}</h3></div></div>
               <aside className="control-panel">
                 <div><span className="panel-label">{copy.explore.combinatorics}</span><div className="metrics"><Metric label={copy.explore.vertices} value={c.V} color="var(--viz-vertex)" /><Metric label={copy.explore.edges} value={c.E} color="var(--viz-edge)" /><Metric label={copy.explore.faces} value={c.F} color={solid.color} /></div><div className="euler-check"><div><CircleDot size={17} /> {copy.explore.euler}</div><strong>{c.V} − {c.E} + {c.F} = <span>2</span></strong></div></div>
                 <div><span className="panel-label">{copy.explore.show}</span><div className="toggle-row"><Toggle active={parts.vertices} onClick={() => setParts((value) => ({ ...value, vertices: !value.vertices }))}>{copy.explore.vertices}</Toggle><Toggle active={parts.edges} onClick={() => setParts((value) => ({ ...value, edges: !value.edges }))}>{copy.explore.edges}</Toggle><Toggle active={parts.faces} onClick={() => setParts((value) => ({ ...value, faces: !value.faces }))}>{copy.explore.faces}</Toggle></div></div>
@@ -168,9 +169,9 @@ export default function Home() {
         <section className="section duality-section dark-stars" id="duality">
           <header className="section-heading inverse"><div><span className="section-index">02</span><div className="eyebrow">{copy.duality.eyebrow}</div></div><h2>{copy.duality.title1} <em>{copy.duality.title2}</em></h2><p>{copy.duality.text}</p></header>
           <div className="dual-layout">
-            <div className="dual-stage">
+            <div className="dual-stage" ref={dualScene.ref}>
               <div className="dual-tabs">{copy.duality.pairs.map((pair) => <button key={pair.source} type="button" aria-pressed={dualSource === pair.source} className={dualSource === pair.source ? "active" : ""} onClick={() => { setDualSource(pair.source); setProgress(0); setPlaying(false); }}>{pair.label}<ArrowLeftRight size={14} />{pair.target}</button>)}</div>
-              <div className="dual-canvas"><DualCanvas source={source} progress={progress} /></div>
+              <div className="dual-canvas"><DeferredScene kind="dual" solidKey={dualSource} progress={progress} active={dualActive} ready={dualScene.ready} copy={copy.atlas.scene} /></div>
               <div className="timeline"><button type="button" aria-label={playing ? copy.duality.pause : copy.duality.play} onClick={() => { if (progress >= 1) setProgress(0); setPlaying((value) => !value); }}>{playing ? <Pause size={18} /> : <Play size={18} />}</button><input aria-label={copy.duality.progress} type="range" min="0" max="1" step="0.001" value={progress} onChange={(event) => { setPlaying(false); setProgress(Number(event.target.value)); }} /><button type="button" aria-label={copy.duality.reset} onClick={() => { setPlaying(false); setProgress(0); }}><RotateCcw size={17} /></button><span>{Math.round(progress * 100)}%</span></div>
             </div>
             <aside className="dual-story"><span className="panel-label">{copy.duality.guide}</span>{copy.duality.story.map((story, index) => { const at = [0.02, 0.28, 0.68][index]; return <button key={story.number} type="button" className={`story-step ${progress >= at ? "reached" : ""}`} onClick={() => { setPlaying(false); setProgress(at); }}><span>{story.number}</span><div><strong>{story.title}</strong><p>{story.text}</p></div></button>; })}<div className="dual-equations"><div><span>V*</span><strong>{targetCounts.V}</strong><small>= F = {sourceCounts.F}</small></div><div><span>E*</span><strong>{targetCounts.E}</strong><small>= E = {sourceCounts.E}</small></div><div><span>F*</span><strong>{targetCounts.F}</strong><small>= V = {sourceCounts.V}</small></div></div><p className="double-dual"><ArrowLeftRight size={16} /><span>{copy.duality.doubleDual}</span></p></aside>
@@ -184,7 +185,7 @@ export default function Home() {
             <div className="proof-choice"><CircleDot size={16} />{copy.proof.choose}</div>
             <div className="proof-steps" role="tablist" aria-label={copy.proof.stepsAria}>{copy.proof.steps.map((step, index) => <button key={step.kicker} type="button" role="tab" aria-selected={proofStep === index} className={proofStep === index ? "active" : proofStep > index ? "done" : ""} onClick={() => setProofStep(index)}><span>{proofStep > index ? <Check size={16} /> : index + 1}</span><small>{step.short}</small></button>)}</div>
             <article className="proof-card"><div className="proof-copy"><div className="eyebrow">{selectedStep.kicker}</div><h3>{selectedStep.title}</h3><p>{selectedStep.text}</p><div className="formula-card"><BlockMath math={selectedStep.formula} /></div><div className="proof-note"><CircleDot size={17} /><span>{selectedStep.takeaway}</span></div>{proofStep === 4 && <p className="uniqueness-note">{copy.atlas.uniqueness}</p>}</div><ProofVisual step={proofStep} locale={locale} copy={copy} stepCopy={selectedStep} /></article>
-            <div className="proof-nav"><button type="button" disabled={proofStep === 0} onClick={() => setProofStep((value) => Math.max(0, value - 1))}>{copy.proof.back}</button><span>{proofStep + 1} / {copy.proof.steps.length}</span><button className="proof-next" type="button" onClick={() => { if (proofStep < copy.proof.steps.length - 1) setProofStep((current) => current + 1); else document.getElementById("lab")?.scrollIntoView({ behavior: "smooth" }); }}>{proofStep === copy.proof.steps.length - 1 ? copy.proof.toLab : copy.proof.next} <ChevronRight size={15} /></button></div>
+            <div className="proof-nav"><button type="button" disabled={proofStep === 0} onClick={() => setProofStep((value) => Math.max(0, value - 1))}>{copy.proof.back}</button><span>{proofStep + 1} / {copy.proof.steps.length}</span><button className="proof-next" type="button" onClick={() => { if (proofStep < copy.proof.steps.length - 1) setProofStep((current) => current + 1); else document.getElementById("lab")?.scrollIntoView({ behavior: scrollBehavior() }); }}>{proofStep === copy.proof.steps.length - 1 ? copy.proof.toLab : copy.proof.next} <ChevronRight size={15} /></button></div>
           </div>
         </section>
 
@@ -192,7 +193,7 @@ export default function Home() {
           <header className="section-heading inverse"><div><span className="section-index">04</span><div className="eyebrow">{copy.lab.eyebrow}</div></div><h2>{copy.lab.title1} <em>{copy.lab.title2}</em></h2><p>{copy.lab.text}</p></header>
           <div className="lab-grid">
             <div className="sliders-card"><div className="slider-block"><div><label htmlFor="polygon-sides">{copy.lab.polygonSides}</label><strong>p = {p}</strong></div><input id="polygon-sides" type="range" min="3" max="8" value={p} onChange={(event) => setP(Number(event.target.value))} /><div className="ticks">{[3,4,5,6,7,8].map((value) => <span key={value}>{value}</span>)}</div></div><div className="slider-block"><div><label htmlFor="vertex-edges">{copy.lab.vertexEdges}</label><strong>q = {q}</strong></div><input id="vertex-edges" type="range" min="3" max="8" value={q} onChange={(event) => setQ(Number(event.target.value))} /><div className="ticks">{[3,4,5,6,7,8].map((value) => <span key={value}>{value}</span>)}</div></div><button className="swap-button" type="button" onClick={() => { setP(q); setQ(p); }}><ArrowLeftRight size={16} /> {copy.lab.swap}</button></div>
-            <div className={`verdict-card ${eulerPass ? "pass" : "fail"}`}><div className="verdict-icon">{eulerPass ? <Check size={28} /> : <X size={28} />}</div><span className="panel-label">{copy.lab.eulerCheck}</span><BlockMath math={`\\frac{1}{${p}}+\\frac{1}{${q}}=${lhs.toFixed(3)}${eulerPass ? ">" : "\\le"}\\frac{1}{2}`} /><h3>{match ? copy.solids[match].name : eulerPass ? copy.lab.candidate : copy.lab.impossible}</h3><p>{match ? copy.lab.matchText.replace("{symbol}", SOLIDS[match].symbol) : eulerPass ? copy.lab.candidateText : copy.lab.impossibleText}</p>{pairValues && Number.isInteger(pairValues.E) && <div className="mini-values"><span>V = {pairValues.V}</span><span>E = {pairValues.E}</span><span>F = {pairValues.F}</span></div>}</div>
+            <div className={`verdict-card ${eulerPass ? "pass" : "fail"}`}><div className="verdict-icon">{eulerPass ? <Check size={28} /> : <X size={28} />}</div><span className="panel-label">{copy.lab.eulerCheck}</span><BlockMath math={`\\frac{1}{${p}}+\\frac{1}{${q}}\\approx${lhs.toFixed(3)}${eulerPass ? ">" : "\\le"}\\frac{1}{2}`} /><h3>{match ? copy.solids[match].name : eulerPass ? copy.lab.candidate : copy.lab.impossible}</h3><p>{match ? copy.lab.matchText.replace("{symbol}", SOLID_INFO[match].symbol) : eulerPass ? copy.lab.candidateText : copy.lab.impossibleText}</p>{pairValues && Number.isInteger(pairValues.E) && <div className="mini-values"><span>V = {pairValues.V}</span><span>E = {pairValues.E}</span><span>F = {pairValues.F}</span></div>}</div>
           </div>
           <div className="angle-explainer">
             <h3>{copy.atlas.angles.heading}</h3>

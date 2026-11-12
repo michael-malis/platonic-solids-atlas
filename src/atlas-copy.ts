@@ -1,4 +1,4 @@
-import type { SolidKey } from "./lib/platonic";
+import type { SolidKey } from "./lib/solid-data";
 
 export type AtlasCopy = {
   intro: { title: string; text: string; notation: string };

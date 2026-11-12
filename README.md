@@ -15,6 +15,8 @@ Interactive 3D educational mini-site about the five Platonic solids, geometric d
 - A `{p, q}` laboratory for exploring the admissible pairs.
 - English and Russian routes with localized metadata.
 - Demand-driven 3D rendering for lower idle CPU/GPU usage.
+- Mathematical profiles for each solid and a live angle-defect explanation.
+- Lazy-loaded 3D scenes; construction pauses outside the viewport or in a hidden tab.
 
 ## Run locally
 
@@ -31,6 +33,16 @@ To make a production build:
 npm run build
 npm run preview
 ```
+
+Verify all five geometries, dual correspondences, the 36 laboratory pairs and proof formulas:
+
+```bash
+npm run verify
+```
+
+The mathematical argument enumerates possible Schläfli pairs and exhibits all five models. The classical uniqueness of a regular convex type for each pair is identified separately.
+
+Task status and rollback notes: [MASTER_PLAN.md](MASTER_PLAN.md). Editorial review: [docs/content-review.md](docs/content-review.md).
 
 ## Deployment
 

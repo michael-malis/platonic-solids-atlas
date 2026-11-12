@@ -25,3 +25,7 @@ Core formula δ=2πq(1/p+1/q−1/2), equality examples, local necessity caveat a
 3. Reciprocal map: one idea—sign changes on a straight threshold. Exact coordinates x=1/p,y=1/q on [0,1/3]². Five realised pairs above boundary, three flat examples on it. Regions labelled by angle-defect sign, not construction claims.
 4. Integer grid retained. Five valid cells and symmetry exact.
 5. Counts and symbols exact; mini-icons decorative, not geometric constructions.
+
+## Follow-up audit
+
+Reviewer rechecked integrated copy and diagrams. All substantive corrections passed. Accepted final findings: rounded Euler decimal uses approx rather than exact equality; δ named explicitly in caption; polygon sides and corner faces distinguished in step 1. EN/RU parity and new TeX verified.

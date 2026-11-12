@@ -4,7 +4,7 @@ Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](
 
 ## Active Work
 
-- [ ] Execute approved content/performance refinement. Next: baseline and bilingual draft; independent subagent review before integration. Acceptance: tracker D1–D5 verified, live EN/RU checked.
+- [ ] Execute approved content/performance refinement. Content and two-pass independent review complete. Local build, mathematics and browser checks pass; see docs/verification.md. Next: Pages-base build, publish and verify Actions/live EN/RU. Acceptance: tracker D1–D5 verified, live EN/RU checked.
 
 ## Decisions
 

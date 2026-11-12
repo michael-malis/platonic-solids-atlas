@@ -158,7 +158,11 @@ em { font-family: "Crimson Pro", Georgia, "Times New Roman", serif; font-weight:
 .solid-tabs button.active { border-bottom: 3px solid var(--ink); color: var(--ink); }
 .solid-tabs button.active span { color: #14998b; }
 .canvas-panel { background: var(--ink); border-radius: var(--radius); box-shadow: var(--shadow-card); display: grid; grid-template-columns: minmax(0, 1fr) 350px; min-height: 620px; overflow: hidden; }
-.canvas-wrap { background: radial-gradient(circle at 55% 35%, #183850 0%, #091929 46%, #05101c 100%); min-height: 620px; overflow: hidden; position: relative; }
+.canvas-wrap { background: radial-gradient(circle at 55% 35%, #183850 0%, #091929 46%, #05101c 100%); min-height: 620px; min-width: 0; overflow: hidden; position: relative; }
+.scene-host { inset: 0; position: absolute; }
+.dual-canvas { position: relative; }
+.scene-placeholder { align-items: center; color: #c7d2de; display: flex; flex-direction: column; gap: 12px; height: 100%; justify-content: center; padding: 70px 24px; text-align: center; }
+.scene-placeholder button { background: #123247; border: 1px solid #5eead4; border-radius: 10px; color: #d9fff8; cursor: pointer; min-height: 44px; padding: 10px 20px; }
 .canvas-wrap.dark-stars { --sky-veil: linear-gradient(rgba(5,16,28,.3), rgba(5,16,28,.3)); --sky-glow-1: radial-gradient(circle at 55% 35%, rgba(24, 65, 87, .76) 0%, rgba(9, 27, 43, .88) 48%, rgba(5, 16, 28, .98) 100%); --sky-glow-2: radial-gradient(ellipse 65% 48% at 92% 100%, rgba(20, 69, 91, .13), transparent 75%); background-color: #05101c; }
 .canvas-wrap canvas, .dual-canvas canvas { touch-action: none; }
 .solid-title { left: 28px; position: absolute; top: 26px; }
@@ -239,7 +243,7 @@ input[type="range"] { accent-color: var(--mint); cursor: pointer; width: 100%; }
 .proof-svg { height: auto; overflow: visible; width: 100%; }
 .proof-caption { bottom: 23px; color: #8ba0b0; font-size: 10px; font-weight: 750; left: 20px; letter-spacing: .13em; position: absolute; right: 20px; text-align: center; text-transform: uppercase; }
 
-.diagram-grid-lines path { fill: none; stroke: rgba(255,255,255,.045); stroke-width: 1; }
+.diagram-grid-lines, .diagram-grid-lines path { fill: none; stroke: rgba(255,255,255,.045); stroke-width: 1; }
 .diagram-muted-graph path { fill: none; stroke: rgba(176,203,220,.24); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 .diagram-face { fill: rgba(45,212,191,.18); stroke: #2dd4bf; stroke-linejoin: round; stroke-width: 3; }
 .diagram-vertex-rays { fill: none; stroke: #f3b84e; stroke-linecap: round; stroke-width: 3; }
@@ -301,6 +305,8 @@ input[type="range"] { accent-color: var(--mint); cursor: pointer; width: 100%; }
 @media (max-width: 920px) {
   .solid-profile { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .solid-profile > div:last-child { border-left: 0; border-top: 1px solid var(--line); grid-column: 1 / -1; padding: 20px 0 0; }
+  .proof-card { display: block; }
+  .proof-visual { min-height: 480px; }
 }
 @media (max-width: 760px) {
   .atlas-intro, .solid-profile, .incidence-copy, .angle-values { grid-template-columns: 1fr; }

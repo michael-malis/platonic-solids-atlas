@@ -1,15 +1,21 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, OrbitControls } from "@react-three/drei";
-import { useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import {
   dualOf,
   geometryForEdges,
   geometryForFaces,
+  SOLIDS,
   type PolyhedronData,
 } from "../lib/platonic";
+import type { SceneProps } from "./deferred-scene";
 
 type DisplayMode = "solid" | "glass" | "wire";
+
+// Measure unscaled layout dimensions: #root's wide-screen CSS zoom otherwise
+// feeds scaled bounds back into Canvas and repeatedly enlarges its render surface.
+const canvasResize = { offsetSize: true };
 
 type PolyhedronProps = {
   data: PolyhedronData;
@@ -23,7 +29,7 @@ type PolyhedronProps = {
   vertexOpacity?: number;
 };
 
-function Polyhedron({
+const Polyhedron = memo(function Polyhedron({
   data,
   showFaces = true,
   showEdges = true,
@@ -36,6 +42,11 @@ function Polyhedron({
 }: PolyhedronProps) {
   const faceGeometry = useMemo(() => geometryForFaces(data), [data]);
   const edgeGeometry = useMemo(() => geometryForEdges(data), [data]);
+  const vertexGeometry = useMemo(() => new THREE.SphereGeometry(1, 12, 12), []);
+  const vertexMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: "#fff8df", transparent: true, opacity: vertexOpacity, emissive: color, emissiveIntensity: 0.22 }), [color, vertexOpacity]);
+  useEffect(() => () => { faceGeometry.dispose(); edgeGeometry.dispose(); }, [faceGeometry, edgeGeometry]);
+  useEffect(() => () => vertexGeometry.dispose(), [vertexGeometry]);
+  useEffect(() => () => vertexMaterial.dispose(), [vertexMaterial]);
   const opacity = faceOpacity ?? (mode === "glass" ? 0.2 : mode === "wire" ? 0 : 0.76);
 
   return (
@@ -63,13 +74,16 @@ function Polyhedron({
       )}
       {showVertices &&
         data.vertices.map((vertex, index) => (
-          <mesh key={index} position={vertex} scale={0.085}>
-            <sphereGeometry args={[1, 12, 12]} />
-            <meshStandardMaterial color="#fff8df" transparent opacity={vertexOpacity} emissive={color} emissiveIntensity={0.22} />
-          </mesh>
+          <mesh key={index} position={vertex} scale={0.085} geometry={vertexGeometry} material={vertexMaterial} dispose={null} />
         ))}
     </group>
   );
+});
+
+function ResumeFrame({ active }: { active: boolean }) {
+  const invalidate = useThree(state => state.invalidate);
+  useEffect(() => { if (active) invalidate(); }, [active, invalidate]);
+  return null;
 }
 
 function Rig({ children }: { children: React.ReactNode }) {
@@ -91,15 +105,18 @@ export function SolidCanvas({
   showFaces,
   showEdges,
   showVertices,
+  active,
 }: {
   data: PolyhedronData;
   mode: DisplayMode;
   showFaces: boolean;
   showEdges: boolean;
   showVertices: boolean;
+  active: boolean;
 }) {
   return (
-    <Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ position: [0, 0.15, 5.4], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+    <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.15, 5.4], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+      <ResumeFrame active={active} />
       <Rig>
         <Polyhedron key={data.key} data={data} mode={mode} showFaces={showFaces} showEdges={showEdges} showVertices={showVertices} />
       </Rig>
@@ -131,6 +148,9 @@ function GrowingEdge({ a, b, fraction, color }: { a: THREE.Vector3; b: THREE.Vec
 
 function DualConstruction({ source, progress }: { source: PolyhedronData; progress: number }) {
   const dual = useMemo(() => dualOf(source), [source]);
+  const vertexGeometry = useMemo(() => new THREE.SphereGeometry(1, 12, 12), []);
+  const vertexMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: "#ffd178", emissive: "#f2a93d", emissiveIntensity: 0.75 }), []);
+  useEffect(() => () => { vertexGeometry.dispose(); vertexMaterial.dispose(); }, [vertexGeometry, vertexMaterial]);
   const faceAlpha = clamp01((progress - 0.74) / 0.23) * 0.68;
 
   return (
@@ -145,10 +165,7 @@ function DualConstruction({ source, progress }: { source: PolyhedronData; progre
       {dual.vertices.map((vertex, index) => {
         const local = clamp01((progress * 1.45 - index / Math.max(1, dual.vertices.length - 1) * 0.32) / 0.32);
         return (
-          <mesh key={index} position={vertex} scale={0.115 * local}>
-            <sphereGeometry args={[1, 12, 12]} />
-            <meshStandardMaterial color="#ffd178" emissive="#f2a93d" emissiveIntensity={0.75} />
-          </mesh>
+          <mesh key={index} position={vertex} scale={0.115 * local} geometry={vertexGeometry} material={vertexMaterial} dispose={null} />
         );
       })}
       {dual.edges.map(([a, b], index) => {
@@ -163,13 +180,20 @@ function DualConstruction({ source, progress }: { source: PolyhedronData; progre
   );
 }
 
-export function DualCanvas({ source, progress }: { source: PolyhedronData; progress: number }) {
+export function DualCanvas({ source, progress, active }: { source: PolyhedronData; progress: number; active: boolean }) {
   return (
-    <Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ position: [0, 0.1, 5.5], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+    <Canvas frameloop={active ? "demand" : "never"} resize={canvasResize} dpr={[1, 1.5]} camera={{ position: [0, 0.1, 5.5], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+      <ResumeFrame active={active} />
       <Rig>
         <DualConstruction source={source} progress={progress} />
       </Rig>
       <OrbitControls makeDefault enableDamping dampingFactor={0.06} minDistance={3.2} maxDistance={8} enablePan={false} />
     </Canvas>
   );
+}
+
+export default function SceneCanvas({ kind, solidKey, active, mode = "solid", showFaces = true, showEdges = true, showVertices = true, progress = 0 }: SceneProps) {
+  return kind === "solid"
+    ? <SolidCanvas data={SOLIDS[solidKey]} mode={mode} showFaces={showFaces} showEdges={showEdges} showVertices={showVertices} active={active} />
+    : <DualCanvas source={SOLIDS[solidKey]} progress={progress} active={active} />;
 }
