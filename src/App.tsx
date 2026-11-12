@@ -78,6 +78,13 @@ export default function Home() {
 
   useEffect(() => { applyRuntimeMetadata(locale); }, [locale]);
   useEffect(() => {
+    // Fragment targets do not exist until React has mounted the page.
+    const section = window.location.hash.slice(1);
+    if (!section) return;
+    const frame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: "instant" }));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => {
     const syncLocale = () => setLocale(localeFromPath());
     window.addEventListener("popstate", syncLocale);
     return () => window.removeEventListener("popstate", syncLocale);
