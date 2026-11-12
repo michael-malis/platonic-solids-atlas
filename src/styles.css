@@ -267,12 +267,53 @@ input[type="range"] { accent-color: var(--mint); cursor: pointer; width: 100%; }
 .result-node { fill: #fff1c7; stroke: #f3b84e; stroke-width: 2; }
 
 .curvature-svg .axis { fill: none; stroke: rgba(255,255,255,.38); stroke-width: 1.5; }
-.sphere-region { fill: url(#curvatureFill); }
+.sphere-region { fill: rgba(45,212,191,.18); }
 .flat-line { fill: none; stroke: #f3b84e; stroke-dasharray: 7 6; stroke-width: 2; }
 .lattice-points circle { fill: #2dd4bf; stroke: #d9fff8; stroke-width: 2; }
 .zone-title { font-size: 14px; font-weight: 700; }.zone-title.positive { fill: #86f2e3; }.zone-title.boundary { fill: #f6cf8a; }.zone-title.negative { fill: #8599a8; }
 .axis-label { fill: #a8bac7; font-family: Georgia, serif; font-size: 15px; }
 .positive-chip rect { fill: rgba(45,212,191,.14); stroke: rgba(45,212,191,.65); }.positive-chip text { fill: #b8fff4; font-family: ui-monospace, monospace; font-size: 14px; }
+
+/* Explanations extend the existing atlas rather than introducing a new card system. */
+.atlas-intro { border-top: 1px solid var(--line); display: grid; gap: 14px 32px; grid-template-columns: 1fr 1fr; margin-bottom: 32px; padding-top: 24px; }
+.atlas-intro h3, .incidence-copy h3, .angle-explainer h3 { font-family: "Crimson Pro", Georgia, serif; font-size: 29px; font-weight: 500; line-height: 1.2; margin: 0; }
+.atlas-intro h3 { grid-column: 1 / -1; }
+.atlas-intro p { color: var(--muted); line-height: 1.65; margin: 0; max-width: 72ch; }
+.solid-profile { display: grid; gap: 28px; grid-template-columns: repeat(3, minmax(0,1fr)); margin-top: 32px; }
+.solid-profile > div + div { border-left: 1px solid var(--line); padding-left: 28px; }
+.solid-profile h3 { font-size: 18px; margin: 0 0 10px; }
+.solid-profile p { color: var(--muted); line-height: 1.65; margin: 0; }
+.solid-profile .katex-display { font-size: .95em; margin-bottom: 0; overflow-x: auto; }
+.incidence-copy { border-top: 1px solid rgba(255,255,255,.14); display: grid; gap: 16px 32px; grid-template-columns: 1fr auto; margin: 36px auto 0; max-width: 1280px; padding-top: 28px; }
+.incidence-copy h3 { grid-column: 1 / -1; }
+.incidence-copy p { color: #c7d2de; line-height: 1.65; margin: 0; max-width: 76ch; }
+.incidence-copy .katex-display { align-self: center; color: #5eead4; margin: 0; }
+.proof-copy > .uniqueness-note { border-top: 1px solid var(--line); font-size: 15px; line-height: 1.55; margin-top: 18px; padding-top: 16px; }
+.angle-explainer { border-bottom: 1px solid rgba(255,255,255,.14); border-top: 1px solid rgba(255,255,255,.14); margin: 32px auto 0; max-width: 1180px; padding: 28px 0; }
+.angle-values { display: grid; gap: 24px; grid-template-columns: 1fr 1.5fr 1fr; margin-top: 24px; }
+.angle-values span { color: #a9b9c6; display: block; font-size: 15px; }
+.angle-values strong { color: #b6f5ed; display: block; font-family: "Crimson Pro", Georgia, serif; font-size: 30px; font-weight: 500; margin-top: 5px; }
+.angle-explainer > p, .angle-explainer details p, .atlas-conclusion { color: #c7d2de; line-height: 1.65; max-width: 76ch; }
+.angle-explainer details { margin-top: 20px; }
+.angle-explainer summary { color: #b6f5ed; cursor: pointer; min-height: 44px; padding-block: 10px; }
+.angle-explainer summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.angle-explainer .katex-display { overflow-x: auto; padding-block: 8px; }
+.atlas-conclusion { margin: 32px auto 0; max-width: 1180px; }
+
+@media (max-width: 920px) {
+  .solid-profile { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .solid-profile > div:last-child { border-left: 0; border-top: 1px solid var(--line); grid-column: 1 / -1; padding: 20px 0 0; }
+}
+@media (max-width: 760px) {
+  .atlas-intro, .solid-profile, .incidence-copy, .angle-values { grid-template-columns: 1fr; }
+  .atlas-intro { gap: 16px; }
+  .solid-profile { gap: 20px; }
+  .solid-profile > div + div { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
+  .incidence-copy .katex-display { justify-self: start; }
+  .angle-values { gap: 16px; }
+  .angle-values > div { align-items: baseline; display: flex; flex-wrap: wrap; gap: 4px 18px; justify-content: space-between; }
+  .angle-values strong { font-size: 27px; }
+}
 
 .integer-grid-wrap { max-width: 410px; width: 100%; }
 .integer-grid { display: grid; gap: 7px; grid-template-columns: 58px repeat(4, 1fr); }

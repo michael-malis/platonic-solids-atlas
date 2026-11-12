@@ -1,4 +1,5 @@
 import type { SolidKey } from "./lib/platonic";
+import { ATLAS_COPY, type AtlasCopy } from "./atlas-copy";
 
 export type Locale = "en" | "ru";
 
@@ -17,6 +18,7 @@ type SolidCopy = { name: string; short: string; note: string };
 type DualPairCopy = { source: SolidKey; label: string; target: string };
 
 export type SiteCopy = {
+  atlas: AtlasCopy;
   meta: { title: string; description: string };
   skip: string;
   brand: string;
@@ -52,6 +54,7 @@ export type SiteCopy = {
 };
 
 const en: SiteCopy = {
+  atlas: ATLAS_COPY.en,
   meta: {
     title: "Platonic Solids Atlas — 3D Duality and Euler's Formula",
     description: "An interactive 3D atlas of the five Platonic solids, their duality, and the Euler argument showing why there are exactly five.",
@@ -75,7 +78,7 @@ const en: SiteCopy = {
     eyebrow: "Explore",
     title1: "Geometry",
     title2: "you can rotate",
-    text: "Every model uses exact coordinates. Faces are recovered as supporting planes of the convex hull; edges are the sides of those faces.",
+    text: "Start with one face, then look at a corner. The same local pattern repeats across the whole solid. Switch off faces or edges to see how the structure fits together.",
     choose: "Choose a solid",
     hintDrag: "drag to rotate",
     hintZoom: "wheel to zoom",
@@ -135,8 +138,8 @@ const en: SiteCopy = {
         text: "Trace the edges and vertices of a regular convex polyhedron as a graph on a sphere. Every face is the same regular p-gon, exactly q edges meet at each vertex, and V, E, F count vertices, edges, and faces. A genuine polygon and a spatial corner each need at least three sides.",
         formula: String.raw`p,q\ge 3`,
         takeaway: "The classification problem is now encoded by the integer pair {p,q}.",
-        visualCaption: "one p-gonal face · one q-valent vertex",
-        visualDescription: "A highlighted polygon represents a p-sided face, and a highlighted vertex has q incident edges. V, E, and F label the counted objects.",
+        visualCaption: "cube example: p = 4, q = 3 · schematic view",
+        visualDescription: "A schematic cube highlights one square face with four sides and one vertex with three incident edges. The counts are V=8, E=12 and F=6.",
       },
       {
         kicker: "Step 2 · double counting",
@@ -154,15 +157,15 @@ const en: SiteCopy = {
         title: "Euler's formula leaves a positive remainder",
         text: "Substitute V=2E/q and F=2E/p into V−E+F=2. Dividing by 2E isolates 1/E, which is positive because a polyhedron has finitely many edges. This positive remainder is the algebraic signal that the graph closes on a sphere rather than extending as a flat tiling.",
         formula: String.raw`\frac{2E}{q}-E+\frac{2E}{p}=2\ \Longrightarrow\ \frac1p+\frac1q-\frac12=\frac1E>0`,
-        takeaway: "Therefore 1/p + 1/q > 1/2. Equality belongs to flat tilings, not convex polyhedra.",
-        visualCaption: "positive · flat boundary · negative",
-        visualDescription: "A curvature map places admissible pairs above the one-half boundary, with flat and hyperbolic regions separated below.",
+        takeaway: "Therefore 1/p + 1/q > 1/2. The equality pairs {3,6}, {4,4} and {6,3} instead give flat tilings.",
+        visualCaption: "angle defect: positive above the line, zero on it",
+        visualDescription: "On axes x=1/p and y=1/q, both from zero to one third, the straight line x+y=1/2 separates positive and negative angle defect. Five admissible pairs lie above it; three flat examples lie on it.",
       },
       {
         kicker: "Step 4 · no other pairs",
         short: "Enumerate pairs",
         title: "The inequality makes the search finite",
-        text: "Duality lets us first assume p≤q. If p≥4, then both reciprocals are at most 1/4, contradicting the strict inequality. Hence p=3, and 1/3+1/q>1/2 gives q<6. Since q≥3, only q=3,4,5 remain; reflecting across p=q restores the two dual partners.",
+        text: "The inequality is unchanged when p and q swap, so first take p≤q. If p≥4, both reciprocals are at most 1/4: their sum cannot exceed 1/2. Hence p=3, and 1/3+1/q>1/2 gives q<6. Only q=3,4,5 remain; swapping the numbers restores the two dual partners.",
         formula: String.raw`(3,3),\ (4,3),\ (3,4),\ (5,3),\ (3,5)`,
         takeaway: "The lattice check is exhaustive: every other integer pair is excluded.",
         visualCaption: "five lattice points survive",
@@ -172,11 +175,11 @@ const en: SiteCopy = {
         kicker: "Step 5 · existence",
         short: "Realise the five",
         title: "Candidates are not yet constructions",
-        text: "The inequality proves that no other integer patterns can occur, but a necessary condition does not build a polyhedron. We therefore exhibit the tetrahedron, cube, octahedron, dodecahedron, and icosahedron. Each has regular faces, the required vertex degree, and is convex, so every surviving pair is realised.",
-        formula: String.raw`\text{five candidates}+\text{five constructions}\Longrightarrow\text{exactly five}`,
-        takeaway: "Exhaustiveness plus existence completes the classification.",
+        text: "The inequality leaves five pairs, but it does not build a solid. The models above realise all five: the tetrahedron, cube, octahedron, dodecahedron and icosahedron. Each is convex, with the required regular faces and vertex pattern.",
+        formula: String.raw`\text{five pairs}\ \longleftrightarrow\ \text{five models}`,
+        takeaway: "Euler restricts the patterns; the models establish existence.",
         visualCaption: "all five patterns are realised",
-        visualDescription: "Five solid cards list the Schläfli symbol and V, E, F values, grouped into dual pairs with the tetrahedron self-dual.",
+        visualDescription: "Five cards list each realised model's name, Schläfli symbol and V, E, F values. The small icons are decorative.",
       },
     ],
   },
@@ -203,6 +206,7 @@ const en: SiteCopy = {
 };
 
 const ru: SiteCopy = {
+  atlas: ATLAS_COPY.ru,
   meta: {
     title: "Атлас платоновых тел — 3D-двойственность и формула Эйлера",
     description: "Интерактивный 3D-атлас пяти платоновых тел, их двойственности и аргумента Эйлера, объясняющего, почему их ровно пять.",
@@ -226,7 +230,7 @@ const ru: SiteCopy = {
     eyebrow: "Исследуйте",
     title1: "Геометрия,",
     title2: "которую можно повернуть",
-    text: "Каждая модель построена из точных координат. Грани вычисляются как опорные плоскости выпуклой оболочки, рёбра — как стороны этих граней.",
+    text: "Начните с одной грани, затем рассмотрите вершину. Один и тот же узор повторяется по всему телу. Отключайте грани или рёбра, чтобы увидеть, как устроена конструкция.",
     choose: "Выберите многогранник",
     hintDrag: "тяните, чтобы вращать",
     hintZoom: "колесо — масштаб",
@@ -286,8 +290,8 @@ const ru: SiteCopy = {
         text: "Рёбра и вершины правильного выпуклого многогранника образуют граф на сфере. Каждая грань — один и тот же правильный p-угольник, а в каждой вершине сходятся ровно q рёбер. Буквы V, E и F обозначают числа вершин, рёбер и граней. Для настоящей грани и пространственного угла нужно не меньше трёх сторон.",
         formula: String.raw`p,q\ge 3`,
         takeaway: "Задача классификации теперь закодирована целочисленной парой {p,q}.",
-        visualCaption: "одна p-угольная грань · одна вершина степени q",
-        visualDescription: "Выделенный многоугольник изображает грань с p сторонами, выделенная вершина имеет q входящих рёбер, а V, E и F отмечают подсчитываемые объекты.",
+        visualCaption: "пример куба: p = 4, q = 3 · схема",
+        visualDescription: "Схематический куб: выделена квадратная грань с четырьмя сторонами и вершина с тремя рёбрами. Числа элементов: V=8, E=12, F=6.",
       },
       {
         kicker: "Шаг 2 · двойной подсчёт",
@@ -305,15 +309,15 @@ const ru: SiteCopy = {
         title: "Формула Эйлера оставляет положительную добавку",
         text: "Подставим V=2E/q и F=2E/p в равенство V−E+F=2. После деления на 2E остаётся величина 1/E, которая положительна, потому что у многогранника конечное ненулевое число рёбер. Именно эта добавка отличает замкнутый граф на сфере от бесконечной плоской мозаики.",
         formula: String.raw`\frac{2E}{q}-E+\frac{2E}{p}=2\ \Longrightarrow\ \frac1p+\frac1q-\frac12=\frac1E>0`,
-        takeaway: "Значит, 1/p + 1/q > 1/2. Равенство соответствует плоской мозаике, а не выпуклому многограннику.",
-        visualCaption: "положительная · плоская граница · отрицательная",
-        visualDescription: "Карта кривизны располагает допустимые пары выше границы одна вторая и отделяет плоскую и гиперболическую области.",
+        takeaway: "Значит, 1/p + 1/q > 1/2. Пары с равенством {3,6}, {4,4} и {6,3} дают плоские мозаики.",
+        visualCaption: "угловой дефект: над прямой положительный, на ней нулевой",
+        visualDescription: "Оси x=1/p и y=1/q идут от нуля до одной трети. Прямая x+y=1/2 разделяет положительный и отрицательный угловой дефект. Пять допустимых пар лежат выше неё, три плоских примера — на ней.",
       },
       {
         kicker: "Шаг 4 · других пар нет",
         short: "Переберём пары",
         title: "Неравенство делает перебор конечным",
-        text: "Благодаря двойственности сначала можно считать p≤q. Если p≥4, обе обратные величины не превосходят 1/4, что противоречит строгому неравенству. Следовательно, p=3, а из 1/3+1/q>1/2 получаем q<6. При q≥3 остаются только q=3,4,5; отражение относительно p=q возвращает две двойственные пары.",
+        text: "Неравенство симметрично по p и q, поэтому сначала рассмотрим p≤q. Если p≥4, обе обратные величины не превосходят 1/4: сумма не может быть больше 1/2. Значит, p=3, а из 1/3+1/q>1/2 получаем q<6. Остаются q=3,4,5; перестановка чисел возвращает две двойственные пары.",
         formula: String.raw`(3,3),\ (4,3),\ (3,4),\ (5,3),\ (3,5)`,
         takeaway: "Перебор исчерпывающий: все остальные целочисленные пары исключены.",
         visualCaption: "на целочисленной сетке остаются пять точек",
@@ -323,11 +327,11 @@ const ru: SiteCopy = {
         kicker: "Шаг 5 · существование",
         short: "Построим пять",
         title: "Допустимая пара ещё не является конструкцией",
-        text: "Неравенство доказывает, что других целочисленных схем быть не может, но необходимое условие само по себе не строит многогранник. Поэтому отдельно предъявим тетраэдр, куб, октаэдр, додекаэдр и икосаэдр. У каждого правильные грани, требуемая степень вершин и выпуклость — значит, все пять пар действительно реализуются.",
-        formula: String.raw`\text{пять кандидатов}+\text{пять конструкций}\Longrightarrow\text{ровно пять}`,
-        takeaway: "Только исключение других пар вместе с существованием пяти моделей завершает классификацию.",
+        text: "Неравенство оставляет пять пар, но само по себе не строит тело. Модели выше реализуют все пять: тетраэдр, куб, октаэдр, додекаэдр и икосаэдр. У каждого есть выпуклость, правильные грани и нужное устройство вершин.",
+        formula: String.raw`\text{пять пар}\ \longleftrightarrow\ \text{пять моделей}`,
+        takeaway: "Эйлер ограничивает возможные схемы; модели подтверждают существование.",
         visualCaption: "все пять схем реализованы",
-        visualDescription: "Пять карточек тел показывают символ Шлефли и значения V, E, F; двойственные пары сгруппированы, а тетраэдр отмечен как самодвойственный.",
+        visualDescription: "Пять карточек показывают названия построенных моделей, символы Шлефли и значения V, E, F. Маленькие значки декоративные.",
       },
     ],
   },

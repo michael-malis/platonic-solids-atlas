@@ -212,3 +212,11 @@ export function valuesForPair(p: number, q: number) {
   const E = (2 * p * q) / denominator;
   return { V: (2 * E) / q, E, F: (2 * E) / p };
 }
+
+export function angleData(p: number, q: number) {
+  const faceAngle = 180 * (p - 2) / p;
+  const total = q * faceAngle;
+  const rawDefect = 360 - total;
+  const defect = Math.abs(rawDefect) < 1e-9 ? 0 : rawDefect;
+  return { faceAngle, total, defect };
+}
