@@ -1,4 +1,4 @@
-# Handoff — Platonic Solids Atlas
+# Handoff - Platonic Solids Atlas
 
 Commits and diffs live in Git. Task status is authoritative in [MASTER_PLAN.md](MASTER_PLAN.md).
 

@@ -19,7 +19,7 @@ type DualPairCopy = { source: SolidKey; label: string; target: string };
 
 export type SiteCopy = {
   atlas: AtlasCopy;
-  meta: { title: string; description: string };
+  meta: { title: string; tabTitle: string; description: string };
   skip: string;
   brand: string;
   nav: { explore: string; duality: string; proof: string; lab: string; start: string; aria: string };
@@ -56,7 +56,8 @@ export type SiteCopy = {
 const en: SiteCopy = {
   atlas: ATLAS_COPY.en,
   meta: {
-    title: "Platonic Solids Atlas — 3D Duality and Euler's Formula",
+    title: "Platonic Solids Atlas with 3D Duality and Euler's Formula",
+    tabTitle: "Platonic Solids Atlas",
     description: "An interactive 3D atlas of the five Platonic solids, their duality, and the Euler argument showing why there are exactly five.",
   },
   skip: "Skip to main content",
@@ -102,7 +103,7 @@ const en: SiteCopy = {
     eyebrow: "Duality",
     title1: "A face becomes",
     title2: "a vertex",
-    text: "Place a point at the center of every face and join points whose original faces share an edge. A new regular polyhedron — the dual — appears.",
+    text: "Place a point at the center of every face and join points whose original faces share an edge. A new regular polyhedron - the dual - appears.",
     pairs: [
       { source: "cube", label: "Cube", target: "Octahedron" },
       { source: "dodeca", label: "Dodecahedron", target: "Icosahedron" },
@@ -144,7 +145,7 @@ const en: SiteCopy = {
       {
         kicker: "Step 2 · double counting",
         short: "Count incidences",
-        title: "Count every edge twice — in two ways",
+        title: "Count every edge twice - in two ways",
         text: "The $F$ faces contribute $p$ edge-sides each, but every actual edge borders two faces, so $pF=2E$. Likewise, the $V$ vertices contribute $q$ edge-ends each, while every edge has exactly two endpoints, so $qV=2E$. The coefficient 2 records the same edge from opposite sides of each count.",
         formula: String.raw`pF=2E,\qquad qV=2E`,
         takeaway: "Both local regularity conditions now connect directly to the global edge count.",
@@ -190,7 +191,7 @@ const en: SiteCopy = {
     text: "Change the number of sides $p$ and the vertex degree $q$. The curvature test immediately shows whether the pattern can close on a sphere.",
     polygonSides: "Sides in each face",
     vertexEdges: "Edges at each vertex",
-    swap: "Swap $p$ and $q$ — take the dual",
+    swap: "Swap $p$ and $q$ - take the dual",
     eulerCheck: "Euler test",
     candidate: "The pair passes the inequality",
     impossible: "No such convex regular solid",
@@ -211,7 +212,8 @@ const en: SiteCopy = {
 const ru: SiteCopy = {
   atlas: ATLAS_COPY.ru,
   meta: {
-    title: "Атлас платоновых тел — 3D-двойственность и формула Эйлера",
+    title: "Атлас платоновых тел с 3D-двойственностью и формулой Эйлера",
+    tabTitle: "Атлас платоновых тел",
     description: "Интерактивный 3D-атлас пяти платоновых тел, их двойственности и аргумента Эйлера, объясняющего, почему их ровно пять.",
   },
   skip: "Перейти к основному содержанию",
@@ -236,7 +238,7 @@ const ru: SiteCopy = {
     text: "Начните с одной грани, затем рассмотрите вершину. Один и тот же узор повторяется по всему телу. Отключайте грани или рёбра, чтобы увидеть, как устроена конструкция.",
     choose: "Выберите многогранник",
     hintDrag: "тяните, чтобы вращать",
-    hintZoom: "колесо — масштаб",
+    hintZoom: "колесо - масштаб",
     combinatorics: "Комбинаторика",
     vertices: "вершин",
     edges: "рёбер",
@@ -257,7 +259,7 @@ const ru: SiteCopy = {
     eyebrow: "Двойственность",
     title1: "Грань становится",
     title2: "вершиной",
-    text: "Поместим точку в центр каждой грани и соединим точки соседних граней. Возникает новый правильный многогранник — двойственный исходному.",
+    text: "Поместим точку в центр каждой грани и соединим точки соседних граней. Возникает новый правильный многогранник - двойственный исходному.",
     pairs: [
       { source: "cube", label: "Куб", target: "Октаэдр" },
       { source: "dodeca", label: "Додекаэдр", target: "Икосаэдр" },
@@ -290,7 +292,7 @@ const ru: SiteCopy = {
         kicker: "Шаг 1 · язык графов",
         short: "Зададим данные",
         title: "Переведём геометрию в подсчёт",
-        text: "Вершины и рёбра образуют граф: мысленно спроецируем его на окружающую сферу без пересечений. Грани — правильные $p$-угольники, в вершине сходятся $q$ рёбер, а $V$, $E$, $F$ — числа вершин, рёбер и граней. Многоугольнику нужны хотя бы три стороны, а выпуклой вершине — хотя бы три грани.",
+        text: "Вершины и рёбра образуют граф: мысленно спроецируем его на окружающую сферу без пересечений. Грани - правильные $p$-угольники, в вершине сходятся $q$ рёбер, а $V$, $E$, $F$ - числа вершин, рёбер и граней. Многоугольнику нужны хотя бы три стороны, а выпуклой вершине - хотя бы три грани.",
         formula: String.raw`p,q\ge 3`,
         takeaway: "Задача классификации теперь закодирована целочисленной парой $\\{p,q\\}$.",
         visualCaption: "пример куба: $p=4$, $q=3$ · схема",
@@ -313,8 +315,8 @@ const ru: SiteCopy = {
         text: "Подставим $V=\\frac{2E}{q}$ и $F=\\frac{2E}{p}$ в равенство $V-E+F=2$. После деления на $2E$ остаётся величина $\\frac1E$, которая положительна, потому что у многогранника конечное ненулевое число рёбер. Именно эта добавка отличает замкнутый граф на сфере от бесконечной плоской мозаики.",
         formula: String.raw`\begin{gathered}\frac{2E}{q}-E+\frac{2E}{p}=2\\[6pt]\frac1p+\frac1q-\frac12=\frac1E>0\end{gathered}`,
         takeaway: "Значит, $\\frac1p+\\frac1q>\\frac12$. Пары с равенством $\\{3,6\\}$, $\\{4,4\\}$ и $\\{6,3\\}$ дают плоские мозаики.",
-        visualCaption: "$\\delta$ — угловой дефект: над прямой положительный, на ней нулевой",
-        visualDescription: "Оси x=1/p и y=1/q идут от нуля до одной трети. Прямая x+y=1/2 разделяет положительный и отрицательный угловой дефект. Пять допустимых пар лежат выше неё, три плоских примера — на ней.",
+        visualCaption: "$\\delta$ - угловой дефект: над прямой положительный, на ней нулевой",
+        visualDescription: "Оси x=1/p и y=1/q идут от нуля до одной трети. Прямая x+y=1/2 разделяет положительный и отрицательный угловой дефект. Пять допустимых пар лежат выше неё, три плоских примера - на ней.",
       },
       {
         kicker: "Шаг 4 · других пар нет",
@@ -345,7 +347,7 @@ const ru: SiteCopy = {
     text: "Меняйте число сторон $p$ и степень вершины $q$. Проверка кривизны сразу покажет, может ли такая схема замкнуться на сфере.",
     polygonSides: "Сторон в грани",
     vertexEdges: "Рёбер при вершине",
-    swap: "Поменять $p$ и $q$ — перейти к двойственному",
+    swap: "Поменять $p$ и $q$ - перейти к двойственному",
     eulerCheck: "Проверка Эйлера",
     candidate: "Пара проходит неравенство",
     impossible: "Такого правильного выпуклого тела нет",
@@ -353,7 +355,7 @@ const ru: SiteCopy = {
     candidateText: "Неравенство выполнено, но ещё нужны целочисленность и явная конструкция.",
     impossibleText: "Угловая схема не оставляет положительной сферической кривизны.",
     allPairs: "Все допустимые пары",
-    mirror: "Поменяйте $p$ и $q$ — получите двойственное",
+    mirror: "Поменяйте $p$ и $q$ - получите двойственное",
     polygon: "-угольник",
     atVertex: "при вершине",
     selfDual: "самодвойственный",

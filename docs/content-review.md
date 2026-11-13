@@ -20,9 +20,9 @@ Core formula δ=2πq(1/p+1/q−1/2), equality examples, local necessity caveat a
 
 ## Figure notes
 
-1. Definition: one idea—read {p,q} on a cube. Question: what do the two numbers count? Schematic perspective, exact incidence (square and degree-three vertex).
-2. Double count: one idea—each edge has two incident faces and two endpoints. Schematic unfolding, exact adjacency; two panels match the two formulas.
-3. Reciprocal map: one idea—sign changes on a straight threshold. Exact coordinates x=1/p,y=1/q on [0,1/3]². Five realised pairs above boundary, three flat examples on it. Regions labelled by angle-defect sign, not construction claims.
+1. Definition: one idea-read {p,q} on a cube. Question: what do the two numbers count? Schematic perspective, exact incidence (square and degree-three vertex).
+2. Double count: one idea-each edge has two incident faces and two endpoints. Schematic unfolding, exact adjacency; two panels match the two formulas.
+3. Reciprocal map: one idea-sign changes on a straight threshold. Exact coordinates x=1/p,y=1/q on [0,1/3]². Five realised pairs above boundary, three flat examples on it. Regions labelled by angle-defect sign, not construction claims.
 4. Integer grid retained. Five valid cells and symmetry exact.
 5. Counts and symbols exact; mini-icons decorative, not geometric constructions.
 

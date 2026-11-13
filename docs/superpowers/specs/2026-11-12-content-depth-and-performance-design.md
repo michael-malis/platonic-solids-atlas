@@ -40,7 +40,7 @@ General symmetry essays, mathematician biographies, the Archimedean-solid catalo
 
 1. **Layered atlas.** Keep almost all extra material behind disclosure controls. This protects the visual density, but leaves the default page feeling nearly as sparse as it does now.
 2. **Guided narrative.** Add a fuller introduction before every interactive section. This improves continuity, but risks turning the atlas into a scrolling textbook.
-3. **Guided atlas with selective depth — selected.** Add one compact definition band, richer figure profiles, short connective explanations, and one optional detail layer only where useful. The page becomes more coherent on first reading while still rewarding direct manipulation.
+3. **Guided atlas with selective depth - selected.** Add one compact definition band, richer figure profiles, short connective explanations, and one optional detail layer only where useful. The page becomes more coherent on first reading while still rewarding direct manipulation.
 
 ## Content architecture
 

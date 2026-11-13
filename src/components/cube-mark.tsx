@@ -2,7 +2,7 @@ type CubeMarkProps = {
   size?: number;
 };
 
-/** Wireframe cube brand mark — mint edges, gold vertices (same drawing as public/favicon.svg). */
+/** Wireframe cube brand mark - mint edges, gold vertices (same drawing as public/favicon.svg). */
 export function CubeMark({ size = 19 }: CubeMarkProps) {
   return (
     <svg

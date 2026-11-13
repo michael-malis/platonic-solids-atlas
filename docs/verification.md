@@ -1,4 +1,4 @@
-# Atlas refinement — verification
+# Atlas refinement - verification
 
 ## Editorial
 
@@ -62,3 +62,12 @@ Chrome rechecked 390, 768, 1024, 1440, 1920 and 2560×1440. All reports have no 
 All six interaction reports pass rotation, wheel zoom, solid/material/visibility selectors, Next and all five proof steps, laboratory flat-angle calculation, dual playback/reset, language/history and persistent Canvas checks. Idle draw delta is zero; offscreen and hidden-document construction pause and resume correctly. These remain simulated viewport and pointer checks, not physical-device tests. Initial JS is 522.46 kB / gzip 159.97 kB; the 917.15 kB scene remains deferred.
 
 Published source 7e9473e passed [build and deployment](https://github.com/michael-malis/platonic-solids-atlas/actions/runs/43309230383). Both public routes return 200. Public entry JS, deferred scene JS, CSS and stars return 200 and match SHA-256 of the CI Pages artifact. Local Windows and Linux CI produce different asset names, so artifact comparison establishes the deployed version. Public Chrome renders EN/RU profiles, angle content and 59 inline KaTeX instances per tested page without KaTeX errors; the scene mounts near duality. Follow-up complete. To reverse only this iteration, revert 7e9473e and let main redeploy.
+
+
+## Title and punctuation update (2026-11-13)
+
+- Full EN title: Platonic Solids Atlas with 3D Duality and Euler's Formula.
+- Browser tabs use Platonic Solids Atlas / Атлас платоновых тел, including after language switches.
+- Static and runtime Open Graph, Twitter, and JSON-LD titles use the full localized title.
+- Removed U+2014 punctuation from tracked project text and documentation.
+- Passed production build, geometry/formula verification, and Chromium checks of both localized routes, metadata, schema, visible text, and RU/EN tab-title switching.

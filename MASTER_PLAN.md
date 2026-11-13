@@ -1,4 +1,4 @@
-# Atlas refinement — master plan
+# Atlas refinement - master plan
 
 ## Goal and guardrails
 

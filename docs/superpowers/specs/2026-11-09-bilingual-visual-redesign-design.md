@@ -36,7 +36,7 @@ The target reader is a curious secondary-school or early undergraduate learner w
 
 ## Approaches considered
 
-1. **Five synchronized, step-specific diagrams — selected.** Each diagram directly maps the current paragraph and formula to visible objects. This gives each proof step its own explanatory job and best matches the educational purpose.
+1. **Five synchronized, step-specific diagrams - selected.** Each diagram directly maps the current paragraph and formula to visible objects. This gives each proof step its own explanatory job and best matches the educational purpose.
 2. **One morphing abstract diagram.** Visually cohesive, but it forces unrelated arguments into one visual grammar and recreates the current problem of insufficient meaning.
 3. **A compact formula board.** Fast and rigorous, but too text-heavy for an interactive geometry atlas.
 
@@ -50,19 +50,19 @@ Every state uses the same left/right structure:
 - A small legend defines the recurring colors: face contribution, vertex contribution, edge count, admissible pair, excluded pair.
 - Changing a step updates text, formula, diagram, caption, and accessible description together.
 
-### Step 1 — Definitions and the graph on a sphere
+### Step 1 - Definitions and the graph on a sphere
 
 **Left content:** introduce a regular convex polyhedron, its graph, `p`, `q`, `V`, `E`, and `F` in plain language; add one short explanation of why `p,q >= 3`.
 
 **Right diagram:** a clean spherical/planar graph patch containing one highlighted `p`-gonal face and one highlighted vertex with `q` incident edges. Labels point from `p` to the boundary of the selected face and from `q` to the star of the selected vertex. A small boundary-case comparison shows why a two-sided face or a degree-two vertex does not make a three-dimensional convex polyhedron.
 
-### Step 2 — Double-counting incidences
+### Step 2 - Double-counting incidences
 
 **Left content:** explain edge-face incidences and edge-endpoint incidences in one compact paragraph before displaying `pF=2E` and `qV=2E`.
 
 **Right diagram:** a split view. On the face side, the sides contributed by all faces flow into edge tokens, with each actual edge receiving two contributions. On the vertex side, half-edges contributed by all vertices pair into full edges, again two per edge. The two visible `×2` groupings provide the reason for the coefficient rather than merely displaying it.
 
-### Step 3 — Euler's formula produces positive curvature
+### Step 3 - Euler's formula produces positive curvature
 
 **Left content:** show the intermediate substitution
 
@@ -76,17 +76,17 @@ Then conclude `1/p + 1/q > 1/2` and distinguish spherical, Euclidean, and hyperb
 
 **Right diagram:** a compact curvature map with the boundary `1/p + 1/q = 1/2`. The current admissible region is visibly separated from the equality and subcritical regions. The expression `1/E > 0` is the bridge between the algebra on the left and the spherical region on the right.
 
-### Step 4 — Exhaustive integer enumeration
+### Step 4 - Exhaustive integer enumeration
 
 **Left content:** state that duality allows the temporary assumption `p <= q`; if `p >= 4`, then `1/p + 1/q <= 1/2`, a contradiction. Hence `p=3`, and then `q<6`, so `q` is `3`, `4`, or `5`. Restore the swapped pairs.
 
 **Right diagram:** an integer `(p,q)` lattice. Cells failing the inequality are muted/crossed. The three cells with `p=3` and `q=3,4,5` light up first; then the reflection across `p=q` reveals `(4,3)` and `(5,3)`. The diagram explicitly presents the enumeration as exhaustive.
 
-### Step 5 — Existence is a separate obligation
+### Step 5 - Existence is a separate obligation
 
 **Left content:** state that the preceding argument supplied necessary possibilities and excluded all other integer pairs, but did not construct a polyhedron. Present the five concrete models and close the theorem by combining exhaustiveness with existence.
 
-**Right diagram:** five small solid cards, paired by duality, with Schläfli symbol and `(V,E,F)`. A checklist indicates regular faces, constant vertex degree, and convexity. Two final badges — “no other pairs” and “all five realised” — join into a proof-complete mark.
+**Right diagram:** five small solid cards, paired by duality, with Schläfli symbol and `(V,E,F)`. A checklist indicates regular faces, constant vertex degree, and convexity. Two final badges - “no other pairs” and “all five realised” - join into a proof-complete mark.
 
 ## Amount and style of mathematical text
 

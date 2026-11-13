@@ -35,7 +35,7 @@ function applyRuntimeMetadata(locale: Locale) {
   const pageUrl = new URL(languagePath(locale), window.location.origin).href;
   const setMeta = (selector: string, value: string) => document.querySelector(selector)?.setAttribute("content", value);
   document.documentElement.lang = locale;
-  document.title = copy.meta.title;
+  document.title = copy.meta.tabTitle;
   setMeta('meta[name="description"]', copy.meta.description);
   setMeta('meta[property="og:title"]', copy.meta.title);
   setMeta('meta[property="og:description"]', copy.meta.description);

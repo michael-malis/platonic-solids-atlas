@@ -1,4 +1,4 @@
-# Platonic Solids Atlas
+# Platonic Solids Atlas with 3D Duality and Euler's Formula
 
 Interactive 3D educational mini-site about the five Platonic solids, geometric duality, Euler's formula, and the proof that there are exactly five regular convex polyhedra.
 
